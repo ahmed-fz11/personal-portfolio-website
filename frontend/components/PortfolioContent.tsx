@@ -52,7 +52,16 @@ export function PortfolioContent() {
     setSubmitted(true);
   };
 
-  const jobs:any = {
+  // Fixed (provide an explicit type)
+interface Job {
+  title: string;
+  company: string;
+  date: string;
+  location: string;
+  responsibilities: string[];
+}
+
+const jobs: Record<string, Job>  = {
     "Teach Smart": {
       title: "Machine Learning Engineer",
       company: "Teach Smart",
@@ -176,8 +185,8 @@ export function PortfolioContent() {
           I build things for the web and AI.
         </h2>
         <p className="max-w-xl text-lg mb-12 text-[#3a506b] dark:text-slate-400">
-          I'm a Computer Science student at LUMS, specializing in Machine Learning and Full-Stack Development.
-          Currently, I'm working as a Machine Learning Engineer at Teach Smart, building AI-powered educational tools.
+          I&apos;m a Computer Science student at LUMS, specializing in Machine Learning and Full-Stack Development.
+          Currently, I&apos;m working as a Machine Learning Engineer at Teach Smart, building AI-powered educational tools.
         </p>
         <Link
           href="#work"
@@ -198,7 +207,7 @@ export function PortfolioContent() {
         <div className="grid md:grid-cols-[3fr_2fr] gap-12">
           <div>
             <p className="mb-4 text-[#3a506b] dark:text-slate-400">
-              I'm a passionate Computer Science student at LUMS, set to graduate in May 2025. My journey in tech has led
+              I&apos;m a passionate Computer Science student at LUMS, set to graduate in May 2025. My journey in tech has led
               me from web development to the exciting realms of AI and Machine Learning. I thrive on challenges and
               continuously seek to expand my skillset.
             </p>
@@ -249,7 +258,7 @@ export function PortfolioContent() {
       <section id="experience" className="py-24">
         <div className="flex items-center gap-4 mb-8">
           <h3 className="text-2xl font-semibold text-[#0a192f] dark:text-slate-200">
-            <span className="text-[#64ffda] font-mono">02.</span> Where I've Worked
+            <span className="text-[#64ffda] font-mono">02.</span> Where I&apos;ve Worked
           </h3>
           <div className="h-[1px] w-72 bg-[#0a192f]/20 dark:bg-slate-600"></div>
         </div>
@@ -276,7 +285,7 @@ export function PortfolioContent() {
             <p className="font-mono text-sm mb-1 text-[#3a506b] dark:text-slate-400">{jobs[activeJob].date}</p>
             <p className="font-mono text-sm mb-4 text-[#3a506b] dark:text-slate-400">{jobs[activeJob].location}</p>
             <ul className="space-y-4">
-              {jobs[activeJob].responsibilities.map((responsibility:any, index:any) => (
+              {jobs[activeJob].responsibilities.map((responsibility:string, index:number) => (
                 <li key={index} className="flex gap-2">
                   <span className="text-[#64ffda] mt-1">▹</span>
                   <span className="text-[#3a506b] dark:text-slate-400">{responsibility}</span>
@@ -291,7 +300,7 @@ export function PortfolioContent() {
       <section id="work" className="py-24">
         <div className="flex items-center gap-4 mb-12">
           <h3 className="text-2xl font-semibold text-slate-900 dark:text-slate-200">
-            <span className="text-[#64ffda] font-mono">03.</span> Some Things I've Built
+            <span className="text-[#64ffda] font-mono">03.</span> Some Things I&apos;ve Built
           </h3>
           <div className="h-[1px] w-full bg-slate-200 dark:bg-slate-600"></div>
         </div>
@@ -383,10 +392,10 @@ export function PortfolioContent() {
 
       {/* Contact Section with Conditional Rendering */}
       <section id="contact" className="py-24 text-center max-w-xl mx-auto">
-        <p className="text-[#64ffda] font-mono mb-4">04. What's Next?</p>
+        <p className="text-[#64ffda] font-mono mb-4">04. What&apos;s Next?</p>
         <h3 className="text-4xl font-semibold text-[#0a192f] dark:text-slate-200 mb-4">Get In Touch</h3>
         <p className="mb-12 text-[#3a506b] dark:text-slate-400">
-          I'm currently looking for new opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!
+          I&apos;m currently looking for new opportunities. Whether you have a question or just want to say hi, I&apos;ll try my best to get back to you!
         </p>
         {submitted ? (
           // Thank You Message (displayed after form submission)

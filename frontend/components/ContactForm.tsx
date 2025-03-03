@@ -49,7 +49,7 @@ export function ContactForm() {
     return (
       <div className="text-center">
         <h3 className="text-2xl font-semibold mb-4">Thank you for your message!</h3>
-        <p>I'll get back to you as soon as possible.</p>
+        <p>I&apos;ll get back to you as soon as possible.</p>
       </div>
     )
   }
