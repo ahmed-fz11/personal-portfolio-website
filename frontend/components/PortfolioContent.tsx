@@ -11,7 +11,7 @@ import chefpic from "../media/chef.jpeg";
 import emailjs from "emailjs-com";
 
 export function PortfolioContent() {
-  const [hoveredProject, setHoveredProject] = useState<number | null>(null);
+  // const [hoveredProject, setHoveredProject] = useState<number | null>(null);
   const [activeJob, setActiveJob] = useState("Teach Smart");
 
   // State for the contact form data
@@ -52,7 +52,7 @@ export function PortfolioContent() {
     setSubmitted(true);
   };
 
-  const jobs = {
+  const jobs:any = {
     "Teach Smart": {
       title: "Machine Learning Engineer",
       company: "Teach Smart",
@@ -276,7 +276,7 @@ export function PortfolioContent() {
             <p className="font-mono text-sm mb-1 text-[#3a506b] dark:text-slate-400">{jobs[activeJob].date}</p>
             <p className="font-mono text-sm mb-4 text-[#3a506b] dark:text-slate-400">{jobs[activeJob].location}</p>
             <ul className="space-y-4">
-              {jobs[activeJob].responsibilities.map((responsibility, index) => (
+              {jobs[activeJob].responsibilities.map((responsibility:any, index:any) => (
                 <li key={index} className="flex gap-2">
                   <span className="text-[#64ffda] mt-1">▹</span>
                   <span className="text-[#3a506b] dark:text-slate-400">{responsibility}</span>
