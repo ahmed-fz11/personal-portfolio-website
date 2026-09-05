@@ -4,15 +4,15 @@ import { useState } from "react";
 import { Github, ExternalLink, Folder } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import pfpic from "../media/pf_pic.jpg";
+import pfpic from "../media/pf_pic.png";
 import intellilearn_pic from "../media/intellilearn.png"; // example for IntelliLearn
-import songrec from "../media/song_rec.png";
-import chefpic from "../media/chef.jpeg";
+import replygeniepic from "../media/replygenie.png";
+import vlnpic from "../media/vln.png";
 import emailjs from "emailjs-com";
 
 export function PortfolioContent() {
   // const [hoveredProject, setHoveredProject] = useState<number | null>(null);
-  const [activeJob, setActiveJob] = useState("Teach Smart");
+  const [activeJob, setActiveJob] = useState("Tajir");
 
   // State for the contact form data
   const [formData, setFormData] = useState({
@@ -63,6 +63,35 @@ export function PortfolioContent() {
     }
   };
 
+  const skillCategories: Record<string, string[]> = {
+    Languages: ["Python", "TypeScript", "JavaScript", "Kotlin", "SQL", "C++", "C", "Haskell"],
+    "Frameworks & Technologies": [
+      "Flask",
+      "FastAPI",
+      "Node.js",
+      "Express.js",
+      "React.js",
+      "Redux",
+      "Android SDK (Kotlin, MVVM)",
+      "Office.js",
+    ],
+    "AI & Machine Learning": [
+      "OpenAI API",
+      "Anthropic Claude",
+      "LangChain",
+      "RAG",
+      "Vector Search",
+      "AI Agents",
+      "MCP",
+      "PyTorch",
+      "TensorFlow",
+      "Scikit-learn",
+    ],
+    "Databases & Data": ["PostgreSQL", "MongoDB", "Supabase", "BigQuery", "Firestore", "Pandas", "NumPy"],
+    "Cloud & DevOps": ["AWS (Lambda, S3, RDS, Cognito)", "GCP (Cloud Run, GCS)", "Docker", "Terraform", "CI/CD", "Vercel"],
+    "Developer Tools": ["Git", "n8n", "Retool", "Figma", "Jira", "VS Code", "Cursor", "Claude Code"],
+  };
+
   // Fixed (provide an explicit type)
 interface Job {
   title: string;
@@ -73,10 +102,22 @@ interface Job {
 }
 
 const jobs: Record<string, Job>  = {
+    Tajir: {
+      title: "Full-Stack Engineer",
+      company: "Tajir (YC W20)",
+      date: "June 2025 - July 2026",
+      location: "Lahore, Pakistan",
+      responsibilities: [
+        "Led delivery-operations systems for a B2B commerce platform moving 4,500+ orders/day across 62 zones — from a handcart-batching algorithm to a rotational-driver assignment model — across Flask, PostgreSQL, Retool, and a Kotlin Android app.",
+        "Took the order-editing and cancellation-reason features from backend to Android UI, driving a 10x jump in structured customer feedback within 10 days of launch.",
+        "Tracked down a driver-pairing bug that was corrupting dispatch, cutting incidents from several a week to zero, then resolved a live production outage affecting 143 orders in under 10 minutes.",
+        "Found a delivery-planning failure that had silently orphaned 190+ deliveries, shipped a fix, and cut a recurring $270/month cloud cost by redesigning the analytics pipeline behind it.",
+      ],
+    },
     "Teach Smart": {
       title: "Machine Learning Engineer",
       company: "Teach Smart",
-      date: "December 2024 - Present",
+      date: "December 2024 - May 2025",
       location: "Newark, DE (Remote)",
       responsibilities: [
         "Developed and deployed a Retrieval-Augmented Generation (RAG) chatbot using Python Flask and Pinecone vector database, assisting students and parents according to state-aligned curricula with optional quiz generation feature.",
@@ -106,7 +147,7 @@ const jobs: Record<string, Job>  = {
     LUMS: {
       title: "Teaching Assistant",
       company: "Lahore University of Management Sciences",
-      date: "September 2021 - Present",
+      date: "September 2021 - May 2025",
       location: "Lahore, Pakistan",
       responsibilities: [
         "Served as a Teaching Assistant for Data Science, Data Structures, and Object Oriented Programming courses.",
@@ -119,6 +160,28 @@ const jobs: Record<string, Job>  = {
   // Featured projects array with unique images
   const projects = [
     {
+      title: "ReplyGenie",
+      description:
+        "An AI-powered Outlook add-in that reads the active email thread and drafts contextual replies with GPT-4o-mini — no more tab-switching to catch up on a conversation. Built as a multi-tenant SaaS with FastAPI and Supabase Auth, with per-tenant data isolation and full draft-history logging.",
+      tech: ["React", "Office.js", "FastAPI", "Supabase", "OpenAI"],
+      links: {
+        github: "https://github.com/ahmed-fz11/outlook-ai-copilot",
+        external: "#",
+      },
+      image: replygeniepic,
+    },
+    {
+      title: "Zero-Shot Vision and Language Navigation",
+      description:
+        "A zero-shot indoor navigation agent that follows plain-language instructions with no finetuning or task-specific training, built for my undergraduate thesis. Combines panoramic scene summarization with a graph-based spatial memory to reason about where to go next, reaching a 47.13% success rate on the Room-to-Room benchmark and outperforming prior training-based approaches.",
+      tech: ["LLaVA-NeXT", "GPT-4o", "Matterport3D"],
+      links: {
+        github: "https://github.com/ahmed-fz11/LLM-Nav",
+        external: "#",
+      },
+      image: vlnpic,
+    },
+    {
       title: "IntelliLearn",
       description:
         "An AI-powered ed-tech platform enabling course exploration, enrollment, community engagement, and personalized learning with a GPT-3.5 chatbot and text summarization. Features include a timed quiz system with concept feedback, React Redux for state management, and student/admin dashboards for performance tracking.",
@@ -129,6 +192,19 @@ const jobs: Record<string, Job>  = {
       },
       image: intellilearn_pic,
     },
+  ];
+
+  // Other projects array with unique projects
+  const otherProjects = [
+    {
+      title: "AttendiGo",
+      description: "A full-stack attendance platform for teachers — class creation, a reporting dashboard, and AI-generated insights. A self-hosted n8n workflow joins attendance and student records on a webhook trigger and calls an LLM to surface trends and flag at-risk students automatically.",
+      tech: ["Flask", "React", "Supabase", "n8n"],
+      links: {
+        github: "https://github.com/ahmed-fz11/attendigo-chalkboard-charm",
+        external: "#",
+      },
+    },
     {
       title: "Song Recommendation Application",
       description:
@@ -138,7 +214,6 @@ const jobs: Record<string, Job>  = {
         github: "https://github.com/tahachm/moody-lyrics",
         external: "#",
       },
-      image: songrec,
     },
     {
       title: "AI Chef Assistant",
@@ -148,20 +223,6 @@ const jobs: Record<string, Job>  = {
       links: {
         github: "https://github.com/Zaimr49/AI-Chef-Assistant/tree/main",
         external: "https://ai-chef-assistant.netlify.app/",
-      },
-      image: chefpic,
-    },
-  ];
-
-  // Other projects array with unique projects
-  const otherProjects = [
-    {
-      title: "Indoor Vision and Language Navigation Agent",
-      description: "A self-prompting indoor navigation system that leverages open-source vision and language models with Matterport3D and Room2Room datasets. The pipeline transforms a single textual prompt into a step-by-step image guide for efficient indoor navigation.",
-      tech: ["Deepseek", "LlavaNext", "Python","GPT","Matterport3D"],
-      links: {
-        github: "#",
-        external: "#",
       },
     },
     {
@@ -196,8 +257,8 @@ const jobs: Record<string, Job>  = {
           I build things for the web and AI.
         </h2>
         <p className="max-w-xl text-lg mb-12 text-content-muted">
-          I&apos;m a Computer Science student at LUMS, specializing in Machine Learning and Full-Stack Development.
-          Currently, I&apos;m working as a Machine Learning Engineer at Teach Smart, building AI-powered educational tools.
+          I&apos;m a Computer Science graduate from LUMS, specializing in Machine Learning and Full-Stack Development.
+          Most recently, I worked as a Full-Stack Engineer at Tajir (YC W20), and I&apos;m currently open to new opportunities.
         </p>
         <Link
           href="#work"
@@ -218,37 +279,11 @@ const jobs: Record<string, Job>  = {
         <div className="grid md:grid-cols-[3fr_2fr] gap-12">
           <div>
             <p className="mb-4 text-content-muted">
-              I&apos;m a passionate Computer Science student at LUMS, set to graduate in May 2025. My journey in tech has led
-              me from web development to the exciting realms of AI and Machine Learning. I thrive on challenges and
-              continuously seek to expand my skillset.
+              I&apos;m a Computer Science graduate from LUMS, where I graduated in May 2025. My journey in tech has led
+              me from web development to the exciting realms of AI and Machine Learning, and most recently to full-stack
+              engineering at scale as a Full-Stack Engineer at Tajir (YC W20). I thrive on challenges and continuously
+              seek to expand my skillset.
             </p>
-            <p className="mb-4 text-content-muted">Here are some of my top skills:</p>
-            <ul className="grid grid-cols-2 gap-2 font-mono text-sm text-content-muted">
-              <li className="flex items-center gap-2">
-                <span className="text-brand">▹</span> Machine Learning
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="text-brand">▹</span> Full-Stack Development (MERN)
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="text-brand">▹</span> Python Web Frameworks 
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="text-brand">▹</span> JavaScript/TypeScript
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="text-brand">▹</span> AWS Cloud Services
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="text-brand">▹</span> LangChain
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="text-brand">▹</span> Retrieval Augmented Generation (RAG)
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="text-brand">▹</span> Natural Language Processing
-              </li>
-            </ul>
           </div>
           <div className="relative group">
             <div className="relative z-10">
@@ -257,11 +292,25 @@ const jobs: Record<string, Job>  = {
                 alt="Ahmad Faraz"
                 width={450}
                 height={400}
-                className="rounded grayscale hover:grayscale-0 transition-all"
+                className="rounded grayscale hover:grayscale-0 transition-all object-cover"
               />
               <div className="absolute inset-0 border-2 border-brand rounded translate-x-5 translate-y-5 -z-10 group-hover:translate-x-4 group-hover:translate-y-4 transition-all"></div>
             </div>
           </div>
+        </div>
+        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
+          {Object.entries(skillCategories).map(([category, items]) => (
+            <div key={category}>
+              <p className="flex items-center gap-2 font-mono text-sm text-content mb-2">
+                <span className="text-brand">▹</span> {category}
+              </p>
+              <ul className="flex flex-wrap gap-x-3 gap-y-1 font-mono text-xs md:text-sm text-content-muted pl-5">
+                {items.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </section>
 

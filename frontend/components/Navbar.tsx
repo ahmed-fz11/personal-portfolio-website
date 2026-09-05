@@ -46,7 +46,7 @@ export function Navbar() {
           <NavItem href="#work" text="03. Work" />
           <NavItem href="#contact" text="04. Contact" />
           <Link
-            href="https://drive.google.com/file/d/1fmcWSWrMwTNIxejVfcBw7ziwWQiF1bea/view?usp=sharing"
+            href="/Ahmad_Faraz_Resume_Jul_2026.pdf"
             target="_blank"
             className="border border-slate-900 dark:border-brand text-content dark:text-brand px-4 py-2 rounded text-sm font-mono
                      hover:bg-slate-900/10 dark:hover:bg-brand/10 transition-all duration-300"

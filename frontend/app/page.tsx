@@ -5,7 +5,7 @@ import Link from "next/link"
 
 export default function Portfolio() {
   return (
-    <ThemeProvider attribute="class">
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <div className="bg-surface min-h-screen text-content dark:text-content-muted relative">
         <Navbar />
         {/* Fixed Social Sidebar */}
