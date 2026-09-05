@@ -26,6 +26,8 @@ export function PortfolioContent() {
 
   // New state to track if the form was submitted
   const [submitted, setSubmitted] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [sendError, setSendError] = useState(false);
 
   // Handle form input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -35,21 +37,30 @@ export function PortfolioContent() {
   // Handle form submission using EmailJS
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await emailjs.send(
-      "service_sdx5kvj",        // Replace with your EmailJS service ID
-      "template_3l4r2ik",        // Replace with your EmailJS template ID
-      {
-        name: formData.name,
-        email: formData.email,
-        contact: formData.contact || "Not Provided",
-        city: formData.city,
-        country: formData.country,
-        message: formData.message,
-      },
-      "LdTK5qTkQpDzv_vKl"        // Replace with your EmailJS public key
-    );
-    // After a successful submission, set submitted to true so the form is replaced
-    setSubmitted(true);
+    setIsSending(true);
+    setSendError(false);
+    try {
+      await emailjs.send(
+        "service_sdx5kvj",        // Replace with your EmailJS service ID
+        "template_3l4r2ik",        // Replace with your EmailJS template ID
+        {
+          name: formData.name,
+          email: formData.email,
+          contact: formData.contact || "Not Provided",
+          city: formData.city,
+          country: formData.country,
+          message: formData.message,
+        },
+        "LdTK5qTkQpDzv_vKl"        // Replace with your EmailJS public key
+      );
+      // After a successful submission, set submitted to true so the form is replaced
+      setSubmitted(true);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      setSendError(true);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   // Fixed (provide an explicit type)
@@ -177,20 +188,20 @@ const jobs: Record<string, Job>  = {
     <main className="container mx-auto px-8 md:px-24 py-24">
       {/* Hero Section */}
       <section className="min-h-screen flex flex-col justify-center">
-        <p className="text-[#64ffda] font-mono mb-5">Hi, my name is</p>
-        <h1 className="text-6xl md:text-7xl font-bold text-[#0a192f] dark:text-slate-200 mb-4">
+        <p className="text-brand font-mono mb-5">Hi, my name is</p>
+        <h1 className="text-6xl md:text-7xl font-bold text-content mb-4">
           Ahmad Faraz.
         </h1>
-        <h2 className="text-5xl md:text-6xl font-bold text-[#3a506b] dark:text-slate-400 mb-6">
+        <h2 className="text-5xl md:text-6xl font-bold text-content-muted mb-6">
           I build things for the web and AI.
         </h2>
-        <p className="max-w-xl text-lg mb-12 text-[#3a506b] dark:text-slate-400">
+        <p className="max-w-xl text-lg mb-12 text-content-muted">
           I&apos;m a Computer Science student at LUMS, specializing in Machine Learning and Full-Stack Development.
           Currently, I&apos;m working as a Machine Learning Engineer at Teach Smart, building AI-powered educational tools.
         </p>
         <Link
           href="#work"
-          className="border border-[#64ffda] text-[#64ffda] px-7 py-4 rounded w-fit hover:bg-[#64ffda]/10 transition-all duration-300"
+          className="border border-brand text-brand px-7 py-4 rounded w-fit hover:bg-brand/10 transition-all duration-300"
         >
           Check out my work!
         </Link>
@@ -199,43 +210,43 @@ const jobs: Record<string, Job>  = {
       {/* About Section */}
       <section id="about" className="py-24">
         <div className="flex items-center gap-4 mb-8">
-          <h3 className="text-2xl font-semibold text-[#0a192f] dark:text-slate-200">
-            <span className="text-[#64ffda] font-mono">01.</span> About Me
+          <h3 className="text-2xl font-semibold text-content">
+            <span className="text-brand font-mono">01.</span> About Me
           </h3>
-          <div className="h-[1px] w-72 bg-[#0a192f]/20 dark:bg-slate-600"></div>
+          <div className="h-[1px] w-72 bg-content/20 dark:bg-slate-600"></div>
         </div>
         <div className="grid md:grid-cols-[3fr_2fr] gap-12">
           <div>
-            <p className="mb-4 text-[#3a506b] dark:text-slate-400">
+            <p className="mb-4 text-content-muted">
               I&apos;m a passionate Computer Science student at LUMS, set to graduate in May 2025. My journey in tech has led
               me from web development to the exciting realms of AI and Machine Learning. I thrive on challenges and
               continuously seek to expand my skillset.
             </p>
-            <p className="mb-4 text-[#3a506b] dark:text-slate-400">Here are some of my top skills:</p>
-            <ul className="grid grid-cols-2 gap-2 font-mono text-sm text-[#3a506b] dark:text-slate-400">
+            <p className="mb-4 text-content-muted">Here are some of my top skills:</p>
+            <ul className="grid grid-cols-2 gap-2 font-mono text-sm text-content-muted">
               <li className="flex items-center gap-2">
-                <span className="text-[#64ffda]">▹</span> Machine Learning
+                <span className="text-brand">▹</span> Machine Learning
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-[#64ffda]">▹</span> Full-Stack Development (MERN)
+                <span className="text-brand">▹</span> Full-Stack Development (MERN)
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-[#64ffda]">▹</span> Python Web Frameworks 
+                <span className="text-brand">▹</span> Python Web Frameworks 
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-[#64ffda]">▹</span> JavaScript/TypeScript
+                <span className="text-brand">▹</span> JavaScript/TypeScript
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-[#64ffda]">▹</span> AWS Cloud Services
+                <span className="text-brand">▹</span> AWS Cloud Services
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-[#64ffda]">▹</span> LangChain
+                <span className="text-brand">▹</span> LangChain
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-[#64ffda]">▹</span> Retrieval Augmented Generation (RAG)
+                <span className="text-brand">▹</span> Retrieval Augmented Generation (RAG)
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-[#64ffda]">▹</span> Natural Language Processing
+                <span className="text-brand">▹</span> Natural Language Processing
               </li>
             </ul>
           </div>
@@ -248,7 +259,7 @@ const jobs: Record<string, Job>  = {
                 height={400}
                 className="rounded grayscale hover:grayscale-0 transition-all"
               />
-              <div className="absolute inset-0 border-2 border-[#64ffda] rounded translate-x-5 translate-y-5 -z-10 group-hover:translate-x-4 group-hover:translate-y-4 transition-all"></div>
+              <div className="absolute inset-0 border-2 border-brand rounded translate-x-5 translate-y-5 -z-10 group-hover:translate-x-4 group-hover:translate-y-4 transition-all"></div>
             </div>
           </div>
         </div>
@@ -257,10 +268,10 @@ const jobs: Record<string, Job>  = {
       {/* Experience Section */}
       <section id="experience" className="py-24">
         <div className="flex items-center gap-4 mb-8">
-          <h3 className="text-2xl font-semibold text-[#0a192f] dark:text-slate-200">
-            <span className="text-[#64ffda] font-mono">02.</span> Where I&apos;ve Worked
+          <h3 className="text-2xl font-semibold text-content">
+            <span className="text-brand font-mono">02.</span> Where I&apos;ve Worked
           </h3>
-          <div className="h-[1px] w-72 bg-[#0a192f]/20 dark:bg-slate-600"></div>
+          <div className="h-[1px] w-72 bg-content/20 dark:bg-slate-600"></div>
         </div>
         <div className="grid md:grid-cols-[200px_1fr] gap-4">
           <div className="flex flex-col">
@@ -270,8 +281,8 @@ const jobs: Record<string, Job>  = {
                 onClick={() => setActiveJob(job)}
                 className={`px-4 py-3 text-left font-mono text-sm border-l-2 ${
                   activeJob === job
-                    ? "border-[#64ffda] bg-[#e6f1ff] dark:bg-[#112240] text-[#64ffda]"
-                    : "border-[#0a192f]/20 dark:border-slate-600 hover:bg-[#e6f1ff] dark:hover:bg-[#112240]/50 hover:text-[#64ffda]"
+                    ? "border-brand bg-surface-raised text-brand"
+                    : "border-content/20 dark:border-slate-600 hover:bg-surface-raised dark:hover:bg-surface-raised/50 hover:text-brand"
                 }`}
               >
                 {job}
@@ -279,16 +290,16 @@ const jobs: Record<string, Job>  = {
             ))}
           </div>
           <div>
-            <h4 className="text-xl text-[#0a192f] dark:text-slate-200 mb-1">
-              {jobs[activeJob].title} <span className="text-[#64ffda]">@ {jobs[activeJob].company}</span>
+            <h4 className="text-xl text-content mb-1">
+              {jobs[activeJob].title} <span className="text-brand">@ {jobs[activeJob].company}</span>
             </h4>
-            <p className="font-mono text-sm mb-1 text-[#3a506b] dark:text-slate-400">{jobs[activeJob].date}</p>
-            <p className="font-mono text-sm mb-4 text-[#3a506b] dark:text-slate-400">{jobs[activeJob].location}</p>
+            <p className="font-mono text-sm mb-1 text-content-muted">{jobs[activeJob].date}</p>
+            <p className="font-mono text-sm mb-4 text-content-muted">{jobs[activeJob].location}</p>
             <ul className="space-y-4">
               {jobs[activeJob].responsibilities.map((responsibility:string, index:number) => (
                 <li key={index} className="flex gap-2">
-                  <span className="text-[#64ffda] mt-1">▹</span>
-                  <span className="text-[#3a506b] dark:text-slate-400">{responsibility}</span>
+                  <span className="text-brand mt-1">▹</span>
+                  <span className="text-content-muted">{responsibility}</span>
                 </li>
               ))}
             </ul>
@@ -299,8 +310,8 @@ const jobs: Record<string, Job>  = {
       {/* Projects Section */}
       <section id="work" className="py-24">
         <div className="flex items-center gap-4 mb-12">
-          <h3 className="text-2xl font-semibold text-slate-900 dark:text-slate-200">
-            <span className="text-[#64ffda] font-mono">03.</span> Some Things I&apos;ve Built
+          <h3 className="text-2xl font-semibold text-content">
+            <span className="text-brand font-mono">03.</span> Some Things I&apos;ve Built
           </h3>
           <div className="h-[1px] w-full bg-slate-200 dark:bg-slate-600"></div>
         </div>
@@ -309,19 +320,19 @@ const jobs: Record<string, Job>  = {
           {projects.map((project, index) => (
             <div key={index} className="relative group">
               {/* Project Content */}
-              <div className="md:absolute md:top-0 md:left-0 md:w-1/2 z-10 bg-slate-100/90 dark:bg-[#112240]/90 p-6 rounded-lg md:rounded-none mb-6 md:mb-0">
-                <p className="text-[#64ffda] font-mono text-sm mb-2">Featured Project</p>
-                <h4 className="text-xl md:text-2xl font-semibold text-slate-900 dark:text-slate-200 mb-4">
+              <div className="md:absolute md:top-0 md:left-0 md:w-1/2 z-10 bg-surface-raised/90 p-6 rounded-lg md:rounded-none mb-6 md:mb-0">
+                <p className="text-brand font-mono text-sm mb-2">Featured Project</p>
+                <h4 className="text-xl md:text-2xl font-semibold text-content mb-4">
                   {project.title}
                 </h4>
                 {/* Description Box */}
-                <div className="md:bg-slate-100 md:dark:bg-[#112240] md:p-6 md:rounded-lg md:shadow-xl mb-4">
-                  <p className="text-sm md:text-base text-slate-700 dark:text-slate-400">{project.description}</p>
+                <div className="md:bg-surface-raised md:p-6 md:rounded-lg md:shadow-xl mb-4">
+                  <p className="text-sm md:text-base text-content-muted">{project.description}</p>
                 </div>
                 {/* Technologies */}
-                <ul className="flex flex-wrap gap-2 md:gap-4 font-mono text-xs md:text-sm my-4 text-slate-700 dark:text-slate-400">
+                <ul className="flex flex-wrap gap-2 md:gap-4 font-mono text-xs md:text-sm my-4 text-content-muted">
                   {project.tech.map((tech, techIndex) => (
-                    <li key={techIndex} className="hover:text-[#64ffda] transition-colors">
+                    <li key={techIndex} className="hover:text-brand transition-colors">
                       {tech}
                     </li>
                   ))}
@@ -330,7 +341,7 @@ const jobs: Record<string, Job>  = {
                 <div className="flex gap-4">
                   <Link
                     href={project.links.github}
-                    className="text-slate-700 dark:text-slate-400 hover:text-[#64ffda] transition-colors transform hover:-translate-y-1 duration-200"
+                    className="text-content-muted hover:text-brand transition-colors transform hover:-translate-y-1 duration-200"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -338,7 +349,7 @@ const jobs: Record<string, Job>  = {
                   </Link>
                   <Link
                     href={project.links.external}
-                    className="text-slate-700 dark:text-slate-400 hover:text-[#64ffda] transition-colors transform hover:-translate-y-1 duration-200"
+                    className="text-content-muted hover:text-brand transition-colors transform hover:-translate-y-1 duration-200"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -361,26 +372,26 @@ const jobs: Record<string, Job>  = {
           ))}
         </div>
         {/* Other Projects Section */}
-        <h4 className="text-center text-[#0a192f] dark:text-slate-200 text-xl mt-24 mb-12">
+        <h4 className="text-center text-content text-xl mt-24 mb-12">
           Other Noteworthy Projects
         </h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {otherProjects.map((proj, idx) => (
-            <div key={idx} className="bg-[#e6f1ff] dark:bg-[#112240] rounded-lg p-6 hover:-translate-y-2 transition-all">
+            <div key={idx} className="bg-surface-raised rounded-lg p-6 hover:-translate-y-2 transition-all">
               <div className="flex justify-between items-center mb-6">
-                <Folder className="text-[#64ffda] h-8 w-8 md:h-10 md:w-10" />
+                <Folder className="text-brand h-8 w-8 md:h-10 md:w-10" />
                 <div className="flex gap-4">
-                  <Link href={proj.links.github} className="text-[#0a192f] dark:text-slate-400 hover:text-[#64ffda]">
+                  <Link href={proj.links.github} className="text-content dark:text-content-muted hover:text-brand">
                     <Github className="h-5 w-5" />
                   </Link>
-                  <Link href={proj.links.external} className="text-[#0a192f] dark:text-slate-400 hover:text-[#64ffda]">
+                  <Link href={proj.links.external} className="text-content dark:text-content-muted hover:text-brand">
                     <ExternalLink className="h-5 w-5" />
                   </Link>
                 </div>
               </div>
-              <h5 className="text-[#0a192f] dark:text-slate-200 text-lg md:text-xl mb-2">{proj.title}</h5>
-              <p className="text-sm mb-4 text-[#3a506b] dark:text-slate-400">{proj.description}</p>
-              <ul className="flex flex-wrap gap-2 md:gap-4 font-mono text-xs md:text-sm text-[#3a506b] dark:text-slate-400">
+              <h5 className="text-content text-lg md:text-xl mb-2">{proj.title}</h5>
+              <p className="text-sm mb-4 text-content-muted">{proj.description}</p>
+              <ul className="flex flex-wrap gap-2 md:gap-4 font-mono text-xs md:text-sm text-content-muted">
                 {proj.tech.map((tech, tidx) => (
                   <li key={tidx}>{tech}</li>
                 ))}
@@ -392,22 +403,22 @@ const jobs: Record<string, Job>  = {
 
       {/* Contact Section with Conditional Rendering */}
       <section id="contact" className="py-24 text-center max-w-xl mx-auto">
-        <p className="text-[#64ffda] font-mono mb-4">04. What&apos;s Next?</p>
-        <h3 className="text-4xl font-semibold text-[#0a192f] dark:text-slate-200 mb-4">Get In Touch</h3>
-        <p className="mb-12 text-[#3a506b] dark:text-slate-400">
+        <p className="text-brand font-mono mb-4">04. What&apos;s Next?</p>
+        <h3 className="text-4xl font-semibold text-content mb-4">Get In Touch</h3>
+        <p className="mb-12 text-content-muted">
           I&apos;m currently looking for new opportunities. Whether you have a question or just want to say hi, I&apos;ll try my best to get back to you!
         </p>
         {submitted ? (
           // Thank You Message (displayed after form submission)
-          <div className="bg-white dark:bg-[#112240] p-6 rounded-lg shadow-lg">
-            <h3 className="text-3xl font-bold text-[#0a192f] dark:text-slate-200">Thank You!</h3>
-            <p className="mt-4 text-[#3a506b] dark:text-slate-400">
+          <div className="bg-surface-raised p-6 rounded-lg shadow-lg">
+            <h3 className="text-3xl font-bold text-content">Thank You!</h3>
+            <p className="mt-4 text-content-muted">
               Your message has been sent successfully. I will get back to you soon!
             </p>
           </div>
         ) : (
           // The Contact Form
-          <form onSubmit={handleSubmit} className="bg-white dark:bg-[#112240] p-6 rounded-lg shadow-lg">
+          <form onSubmit={handleSubmit} className="bg-surface-raised p-6 rounded-lg shadow-lg">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
                 type="text"
@@ -471,10 +482,16 @@ const jobs: Record<string, Job>  = {
             </div>
             <button
               type="submit"
-              className="border border-[#64ffda] text-[#64ffda] px-7 py-4 rounded w-full mt-4"
+              disabled={isSending}
+              className="border border-brand text-brand px-7 py-4 rounded w-full mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Send Message
+              {isSending ? "Sending..." : "Send Message"}
             </button>
+            {sendError && (
+              <p className="mt-4 text-red-500 text-sm">
+                Something went wrong sending your message. Please try again, or email me directly at ahmedd.fz11@gmail.com.
+              </p>
+            )}
           </form>
         )}
       </section>

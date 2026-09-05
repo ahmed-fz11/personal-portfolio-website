@@ -62,9 +62,39 @@ html {
   }
 }
 
+/*
+ * Brand palette. Stored as HSL channel triplets (no hsl() wrapper) so Tailwind
+ * can inject <alpha-value> and opacity modifiers like `bg-brand/10` keep working.
+ *
+ * Dark values are the original hardcoded hexes, unchanged:
+ *   brand #64ffda · surface #0a192f · surface-raised #112240
+ *   content slate-200 · content-muted slate-400
+ *
+ * Light mode uses a darker teal for `brand` because #64ffda on white is only
+ * 1.25:1 — far below the WCAG AA 4.5:1 floor. #0f766e keeps the hue and clears AA
+ * against both light surfaces (white and #e6f1ff), which is the binding constraint.
+ */
+@layer base {
+  :root {
+    --brand: 175.3 77.4% 26.1%; /* #0f766e — 5.47:1 on white, 4.79:1 on surface-raised */
+    --surface: 0 0% 100%; /* #ffffff */
+    --surface-raised: 213.6 100% 95.1%; /* #e6f1ff */
+    --content: 215.7 64.9% 11.2%; /* #0a192f */
+    --content-muted: 213.1 29.7% 32.4%; /* #3a506b */
+  }
+
+  .dark {
+    --brand: 165.7 100% 69.6%; /* #64ffda */
+    --surface: 215.7 64.9% 11.2%; /* #0a192f */
+    --surface-raised: 218.3 58% 15.9%; /* #112240 */
+    --content: 214.3 31.8% 91.4%; /* #e2e8f0 slate-200 */
+    --content-muted: 215 20.2% 65.1%; /* #94a3b8 slate-400 */
+  }
+}
+
 @layer base {
   body {
-    @apply bg-white text-slate-900 dark:bg-[#0a192f] dark:text-slate-400;
+    @apply bg-surface text-content-muted;
   }
 }
 

@@ -6,14 +6,14 @@ import Link from "next/link"
 export default function Portfolio() {
   return (
     <ThemeProvider attribute="class">
-      <div className="bg-white dark:bg-[#0a192f] min-h-screen text-[#0a192f] dark:text-slate-400 relative">
+      <div className="bg-surface min-h-screen text-content dark:text-content-muted relative">
         <Navbar />
         {/* Fixed Social Sidebar */}
         <div className="fixed left-10 bottom-0 hidden md:block">
           <div className="flex flex-col items-center gap-6">
             <Link
               href="https://github.com/ahmed-fz11"
-              className="text-[#0a192f] dark:text-slate-400 hover:text-[#64ffda] dark:hover:text-[#64ffda] transform hover:-translate-y-1 transition-all"
+              className="text-content dark:text-content-muted hover:text-brand transform hover:-translate-y-1 transition-all"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -32,7 +32,7 @@ export default function Portfolio() {
             </Link>
             <Link
               href="https://www.linkedin.com/in/ahmadfarazdeveloper/"
-              className="text-[#0a192f] dark:text-slate-400 hover:text-[#64ffda] dark:hover:text-[#64ffda] transform hover:-translate-y-1 transition-all"
+              className="text-content dark:text-content-muted hover:text-brand transform hover:-translate-y-1 transition-all"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -53,7 +53,7 @@ export default function Portfolio() {
             </Link>
             <Link
               href="mailto:ahmedd.fz11@gmail.com"
-              className="text-[#0a192f] dark:text-slate-400 hover:text-[#64ffda] dark:hover:text-[#64ffda] transform hover:-translate-y-1 transition-all"
+              className="text-content dark:text-content-muted hover:text-brand transform hover:-translate-y-1 transition-all"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -71,7 +71,7 @@ export default function Portfolio() {
                 <polyline points="22,6 12,13 2,6"></polyline>
               </svg>
             </Link>
-            <div className="h-24 w-[1px] bg-[#0a192f] dark:bg-slate-400 mt-4"></div>
+            <div className="h-24 w-[1px] bg-content dark:bg-content-muted mt-4"></div>
           </div>
         </div>
 
@@ -80,12 +80,12 @@ export default function Portfolio() {
           <div className="flex flex-col items-center gap-6">
             <Link
               href="mailto:ahmedd.fz11@gmail.com"
-              className="vertical-text text-[#0a192f] dark:text-slate-400 hover:text-[#64ffda] dark:hover:text-[#64ffda] transform hover:-translate-y-1 transition-all"
+              className="vertical-text text-content dark:text-content-muted hover:text-brand transform hover:-translate-y-1 transition-all"
               style={{ writingMode: "vertical-rl" }}
             >
               ahmedd.fz11@gmail.com
             </Link>
-            <div className="h-24 w-[1px] bg-[#0a192f] dark:bg-slate-400 mt-4"></div>
+            <div className="h-24 w-[1px] bg-content dark:bg-content-muted mt-4"></div>
           </div>
         </div>
 
