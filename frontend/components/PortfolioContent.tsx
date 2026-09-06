@@ -6,6 +6,8 @@ import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { Reveal } from "./Reveal";
 import { SectionHeading } from "./SectionHeading";
+import { FormField } from "./FormField";
+import { EMAIL } from "@/lib/site";
 import pfpic from "../media/pf_pic.png";
 import intellilearn_pic from "../media/intellilearn.png"; // example for IntelliLearn
 import replygeniepic from "../media/replygenie.png";
@@ -31,14 +33,59 @@ export function PortfolioContent() {
   const [isSending, setIsSending] = useState(false);
   const [sendError, setSendError] = useState(false);
 
+  /**
+   * Field-level errors. The form previously relied entirely on native
+   * validation tooltips, which are unstyled, vanish on blur, and expose
+   * nothing to assistive tech. These persist inline and drive aria-invalid.
+   */
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateField = (name: string, value: string): string => {
+    const v = value.trim();
+    if (name === "contact") return ""; // the only optional field
+    if (!v) return "This field is required.";
+    if (name === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
+      return "Enter a valid email address, like name@example.com.";
+    }
+    return "";
+  };
+
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
+  };
+
   // Handle form input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    // Clear an existing error as soon as the field becomes valid, rather than
+    // making the user blur again to find out.
+    setErrors((prev) =>
+      prev[name] ? { ...prev, [name]: validateField(name, value) } : prev
+    );
   };
 
   // Handle form submission using EmailJS
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate everything up front so all problems surface at once, and put
+    // focus on the first offending field.
+    const nextErrors: Record<string, string> = {};
+    for (const key of Object.keys(formData) as (keyof typeof formData)[]) {
+      const msg = validateField(key, formData[key]);
+      if (msg) nextErrors[key] = msg;
+    }
+    setErrors(nextErrors);
+    const firstInvalid = Object.keys(nextErrors)[0];
+    if (firstInvalid) {
+      document.getElementById(`field-${firstInvalid}`)?.focus();
+      return;
+    }
+
     setIsSending(true);
     setSendError(false);
     try {
@@ -513,100 +560,108 @@ const jobs: Record<string, Job>  = {
       </section>
 
 
-      {/* Contact Section with Conditional Rendering */}
-      <section id="contact" className="py-24 text-center max-w-xl mx-auto">
-        <p className="text-brand font-mono mb-4">04. What&apos;s Next?</p>
-        <h3 className="text-4xl font-semibold text-content mb-4">Get In Touch</h3>
-        <p className="mb-12 text-content-muted">
-          I&apos;m currently looking for new opportunities. Whether you have a question or just want to say hi, I&apos;ll try my best to get back to you!
-        </p>
-        {submitted ? (
-          // Thank You Message (displayed after form submission)
-          <div className="bg-surface-raised p-6 rounded-lg shadow-lg">
-            <h3 className="text-3xl font-bold text-content">Thank You!</h3>
-            <p className="mt-4 text-content-muted">
-              Your message has been sent successfully. I will get back to you soon!
+      {/* Contact */}
+      <section id="contact" className="py-20 md:py-24">
+        <SectionHeading num="04." title="Get In Touch" />
+
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.15fr] lg:gap-16">
+          <Reveal>
+            <p className="max-w-prose text-body text-content-muted">
+              I&apos;m currently looking for new opportunities. Whether you have a question
+              or just want to say hi, I&apos;ll do my best to get back to you.
             </p>
-          </div>
-        ) : (
-          // The Contact Form
-          <form onSubmit={handleSubmit} className="bg-surface-raised p-6 rounded-lg shadow-lg">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input
-                type="text"
-                name="name"
-                placeholder="Your Name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="p-3 border rounded w-full"
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="Your Email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="p-3 border rounded w-full"
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <input
-                type="tel"
-                name="contact"
-                placeholder="Contact Number (Optional)"
-                value={formData.contact}
-                onChange={handleChange}
-                className="p-3 border rounded w-full"
-              />
-              <input
-                type="text"
-                name="city"
-                placeholder="City"
-                value={formData.city}
-                onChange={handleChange}
-                required
-                className="p-3 border rounded w-full"
-              />
-            </div>
-            <div className="mt-4">
-              <input
-                type="text"
-                name="country"
-                placeholder="Country"
-                value={formData.country}
-                onChange={handleChange}
-                required
-                className="p-3 border rounded w-full"
-              />
-            </div>
-            <div className="mt-4">
-              <textarea
-                name="message"
-                placeholder="Tell me about any service you require from me or ask a question..."
-                value={formData.message}
-                onChange={handleChange}
-                required
-                rows={5}
-                className="p-3 border rounded w-full"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={isSending}
-              className="border border-brand text-brand px-7 py-4 rounded w-full mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSending ? "Sending..." : "Send Message"}
-            </button>
-            {sendError && (
-              <p className="mt-4 text-red-500 text-sm">
-                Something went wrong sending your message. Please try again, or email me directly at ahmedd.fz11@gmail.com.
-              </p>
+            {/* A direct address, so a broken integration never costs a message. */}
+            <p className="mt-6 font-mono text-sm text-content-muted">
+              Prefer email?{" "}
+              <Link
+                href={`mailto:${EMAIL}`}
+                className="text-brand underline-offset-4 transition-colors duration-200 hover:underline"
+              >
+                {EMAIL}
+              </Link>
+            </p>
+          </Reveal>
+
+          <Reveal delay={80}>
+            {submitted ? (
+              <div
+                role="status"
+                className="rounded-lg border border-brand/30 bg-surface-raised p-8"
+              >
+                <h4 className="font-display text-subheading font-semibold text-content">
+                  Message sent
+                </h4>
+                <p className="mt-3 text-body text-content-muted">
+                  Thanks for reaching out — I&apos;ll get back to you soon.
+                </p>
+              </div>
+            ) : (
+              <form
+                onSubmit={handleSubmit}
+                noValidate
+                className="rounded-lg border border-content/10 bg-surface-raised p-6 md:p-8"
+              >
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <FormField
+                    name="name" label="Name" autoComplete="name"
+                    value={formData.name} error={errors.name}
+                    onChange={handleChange} onBlur={handleBlur}
+                  />
+                  <FormField
+                    name="email" label="Email" type="email" autoComplete="email"
+                    value={formData.email} error={errors.email}
+                    onChange={handleChange} onBlur={handleBlur}
+                  />
+                  <FormField
+                    name="contact" label="Phone" type="tel" autoComplete="tel" optional
+                    value={formData.contact} error={errors.contact}
+                    onChange={handleChange} onBlur={handleBlur}
+                  />
+                  <FormField
+                    name="city" label="City" autoComplete="address-level2"
+                    value={formData.city} error={errors.city}
+                    onChange={handleChange} onBlur={handleBlur}
+                  />
+                  <div className="sm:col-span-2">
+                    <FormField
+                      name="country" label="Country" autoComplete="country-name"
+                      value={formData.country} error={errors.country}
+                      onChange={handleChange} onBlur={handleBlur}
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <FormField
+                      name="message" label="Message" textarea
+                      placeholder="What would you like to talk about?"
+                      value={formData.message} error={errors.message}
+                      onChange={handleChange} onBlur={handleBlur}
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSending}
+                  className="mt-6 w-full rounded bg-brand px-7 py-4 font-mono text-sm text-surface
+                             transition-[transform,opacity] duration-200 ease-out-quart
+                             hover:-translate-y-0.5 disabled:cursor-not-allowed
+                             disabled:opacity-60 disabled:hover:translate-y-0"
+                >
+                  {isSending ? "Sending…" : "Send message"}
+                </button>
+
+                {sendError && (
+                  <p role="alert" className="mt-4 text-sm text-red-500 dark:text-red-400">
+                    Something went wrong sending your message. Please try again, or email
+                    me directly at {EMAIL}.
+                  </p>
+                )}
+              </form>
             )}
-          </form>
-        )}
+          </Reveal>
+        </div>
       </section>
+
     </main>
   );
 }
