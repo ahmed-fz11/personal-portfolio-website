@@ -334,92 +334,104 @@ const jobs: Record<string, Job>  = {
         </div>
       </section>
 
-      {/* About Section */}
-      <section id="about" className="py-24">
-        <div className="flex items-center gap-4 mb-8">
-          <h3 className="text-2xl font-semibold text-content">
-            <span className="text-brand font-mono">01.</span> About Me
-          </h3>
-          <div className="h-[1px] w-72 bg-content/20 dark:bg-slate-600"></div>
-        </div>
-        <div className="grid md:grid-cols-[3fr_2fr] gap-12">
-          <div>
-            <p className="mb-4 text-content-muted">
+      {/* About. Section rhythm is deliberately varied rather than a uniform
+          96px everywhere, which read as monotony. */}
+      <section id="about" className="py-20 md:py-24">
+        <SectionHeading num="01." title="About Me" />
+
+        <div className="grid gap-12 md:grid-cols-[3fr_2fr] md:gap-16">
+          <Reveal>
+            {/* max-w-prose: this paragraph previously ran to ~78 characters
+                with no constraint. Comfortable measure is 45-75. */}
+            <p className="max-w-prose text-body text-content-muted">
               I&apos;m a Computer Science graduate from LUMS, where I graduated in May 2025. My journey in tech has led
               me from web development to the exciting realms of AI and Machine Learning, and most recently to full-stack
               engineering at scale as a Full-Stack Engineer at Tajir (YC W20). I thrive on challenges and continuously
               seek to expand my skillset.
             </p>
-          </div>
-          <div className="relative group">
+          </Reveal>
+
+          <Reveal delay={80} className="group relative w-fit">
             <div className="relative z-10">
               <Image
                 src={pfpic}
                 alt="Ahmad Faraz"
                 width={450}
                 height={400}
-                className="rounded grayscale hover:grayscale-0 transition-all object-cover"
+                className="rounded object-cover grayscale transition-[filter,transform] duration-300 ease-out-quart group-hover:grayscale-0"
               />
-              <div className="absolute inset-0 border-2 border-brand rounded translate-x-5 translate-y-5 -z-10 group-hover:translate-x-4 group-hover:translate-y-4 transition-all"></div>
+              <div className="absolute inset-0 -z-10 translate-x-5 translate-y-5 rounded border-2 border-brand transition-transform duration-300 ease-out-quart group-hover:translate-x-3 group-hover:translate-y-3" />
             </div>
-          </div>
+          </Reveal>
         </div>
-        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
+
+        <Reveal delay={120} className="mt-16 grid gap-x-8 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
           {Object.entries(skillCategories).map(([category, items]) => (
             <div key={category}>
-              <p className="flex items-center gap-2 font-mono text-sm text-content mb-2">
-                <span className="text-brand">▹</span> {category}
+              <p className="mb-2.5 flex items-center gap-2 font-mono text-eyebrow uppercase text-content">
+                <span className="text-brand" aria-hidden="true">▹</span> {category}
               </p>
-              <ul className="flex flex-wrap gap-x-3 gap-y-1 font-mono text-xs md:text-sm text-content-muted pl-5">
+              <ul className="flex flex-wrap gap-x-3 gap-y-1 pl-5 font-mono text-xs text-content-muted md:text-sm">
                 {items.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
             </div>
           ))}
-        </div>
+        </Reveal>
       </section>
 
-      {/* Experience Section */}
-      <section id="experience" className="py-24">
-        <div className="flex items-center gap-4 mb-8">
-          <h3 className="text-2xl font-semibold text-content">
-            <span className="text-brand font-mono">02.</span> Where I&apos;ve Worked
-          </h3>
-          <div className="h-[1px] w-72 bg-content/20 dark:bg-slate-600"></div>
-        </div>
-        <div className="grid md:grid-cols-[200px_1fr] gap-4">
-          <div className="flex flex-col">
-            {Object.keys(jobs).map((job) => (
-              <button
-                key={job}
-                onClick={() => setActiveJob(job)}
-                className={`px-4 py-3 text-left font-mono text-sm border-l-2 ${
-                  activeJob === job
-                    ? "border-brand bg-surface-raised text-brand"
-                    : "border-content/20 dark:border-slate-600 hover:bg-surface-raised dark:hover:bg-surface-raised/50 hover:text-brand"
-                }`}
-              >
-                {job}
-              </button>
-            ))}
+      {/* Experience */}
+      <section id="experience" className="py-20 md:py-24">
+        <SectionHeading num="02." title="Where I've Worked" />
+
+        <Reveal className="grid gap-8 md:grid-cols-[190px_1fr] md:gap-10">
+          <div
+            className="flex overflow-x-auto md:flex-col md:overflow-visible"
+            role="tablist"
+            aria-label="Employers"
+          >
+            {Object.keys(jobs).map((job) => {
+              const selected = activeJob === job
+              return (
+                <button
+                  key={job}
+                  role="tab"
+                  aria-selected={selected}
+                  onClick={() => setActiveJob(job)}
+                  className={`whitespace-nowrap border-b-2 px-4 py-3 text-left font-mono text-sm transition-colors duration-200 md:border-b-0 md:border-l-2 ${
+                    selected
+                      ? "border-brand bg-brand/5 text-brand"
+                      : "border-content/15 text-content-muted hover:bg-brand/5 hover:text-brand"
+                  }`}
+                >
+                  {job}
+                </button>
+              )
+            })}
           </div>
+
           <div>
-            <h4 className="text-xl text-content mb-1">
-              {jobs[activeJob].title} <span className="text-brand">@ {jobs[activeJob].company}</span>
+            <h4 className="font-display text-subheading font-semibold text-content">
+              {jobs[activeJob].title}{" "}
+              <span className="text-brand">@ {jobs[activeJob].company}</span>
             </h4>
-            <p className="font-mono text-sm mb-1 text-content-muted">{jobs[activeJob].date}</p>
-            <p className="font-mono text-sm mb-4 text-content-muted">{jobs[activeJob].location}</p>
-            <ul className="space-y-4">
-              {jobs[activeJob].responsibilities.map((responsibility:string, index:number) => (
-                <li key={index} className="flex gap-2">
-                  <span className="text-brand mt-1">▹</span>
-                  <span className="text-content-muted">{responsibility}</span>
+            <p className="mt-2 font-mono text-sm text-content-muted">
+              {jobs[activeJob].date} · {jobs[activeJob].location}
+            </p>
+
+            {/* max-w-prose: these bullets ran to ~107 characters per line,
+                roughly 43% over the readable ceiling. */}
+            <ul className="mt-6 max-w-prose space-y-4">
+              {jobs[activeJob].responsibilities.map((responsibility: string, index: number) => (
+                <li key={index} className="flex gap-3">
+                  <span className="mt-1 shrink-0 text-brand" aria-hidden="true">▹</span>
+                  <span className="text-body text-content-muted">{responsibility}</span>
                 </li>
               ))}
             </ul>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* Projects — bento grid. Varied spans give the section rhythm and,
