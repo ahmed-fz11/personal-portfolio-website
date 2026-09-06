@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: "Calibre", "Inter", "San Francisco", "SF Pro Text", -apple-system, system-ui, sans-serif;
-}
-
 .vertical-text {
   writing-mode: vertical-rl;
   text-orientation: mixed;
@@ -13,6 +9,92 @@ body {
 
 html {
   scroll-behavior: smooth;
+}
+
+/* Anchor targets clear the 70px fixed header when jumped to. */
+section[id] {
+  scroll-margin-top: 6rem;
+}
+
+/*
+ * Motion primitives.
+ * Durations follow the project rule: hover < 300ms, entrance < 600ms.
+ * Easing is always a custom curve — never the browser's `ease`/`linear`.
+ */
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --dur-hover: 200ms;
+  --dur-enter: 560ms;
+}
+
+/* Scroll reveal: one fade/rise per element, toggled by IntersectionObserver. */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity var(--dur-enter) var(--ease-out-expo),
+    transform var(--dur-enter) var(--ease-out-expo);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Hero entrance: runs once on load, staggered via --enter-delay. */
+@keyframes enter-rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.enter {
+  opacity: 0;
+  animation: enter-rise var(--dur-enter) var(--ease-out-expo) forwards;
+  animation-delay: var(--enter-delay, 0ms);
+}
+
+/* Branded selection — replaces the browser default. */
+::selection {
+  background: hsl(var(--brand) / 0.25);
+  color: hsl(var(--content));
+}
+
+/* Visible, on-brand focus for keyboard users only. */
+:focus-visible {
+  outline: 2px solid hsl(var(--brand));
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/*
+ * Reduced motion: everything resolves to its final state immediately.
+ * Placed after the definitions above so it wins without !important on layout.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .enter {
+    opacity: 1;
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @layer base {

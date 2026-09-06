@@ -11,6 +11,32 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      // The Geist variables were previously declared on <body> but never wired
+      // up here, and globals.css overrode body with an unloaded "Calibre"/"Inter"
+      // stack — so both faces shipped as payload and neither actually rendered.
+      fontFamily: {
+        sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
+        mono: ["var(--font-geist-mono)", "ui-monospace", "SFMono-Regular", "monospace"],
+        display: ["var(--font-display)", "var(--font-geist-sans)", "system-ui", "sans-serif"],
+      },
+      // Fluid scale. display-1 : body ≈ 5.2:1 at max viewport.
+      fontSize: {
+        "display-1": ["clamp(3rem, 2.2rem + 3.4vw, 5.5rem)", { lineHeight: "0.95", letterSpacing: "-0.035em" }],
+        "display-2": ["clamp(1.75rem, 1.25rem + 2.2vw, 3rem)", { lineHeight: "1.06", letterSpacing: "-0.022em" }],
+        "heading": ["clamp(1.5rem, 1.3rem + 0.8vw, 2rem)", { lineHeight: "1.15", letterSpacing: "-0.018em" }],
+        "subheading": ["clamp(1.125rem, 1.05rem + 0.4vw, 1.375rem)", { lineHeight: "1.25", letterSpacing: "-0.012em" }],
+        "body": ["1.0625rem", { lineHeight: "1.65" }],
+        "body-lg": ["1.125rem", { lineHeight: "1.6" }],
+        "eyebrow": ["0.8125rem", { lineHeight: "1.4", letterSpacing: "0.1em" }],
+      },
+      transitionTimingFunction: {
+        "out-expo": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "out-quart": "cubic-bezier(0.25, 1, 0.5, 1)",
+        "in-out-expo": "cubic-bezier(0.87, 0, 0.13, 1)",
+      },
+      maxWidth: {
+        prose: "65ch",
+      },
       colors: {
         // Brand tokens — see globals.css. These flip per theme, so components
         // use `text-brand` / `bg-surface` instead of paired `x dark:x` literals.
