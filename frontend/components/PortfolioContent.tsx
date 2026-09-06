@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Github, ExternalLink, Folder } from "lucide-react";
+import { Github, ExternalLink, Folder, FileText } from "lucide-react";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { Reveal } from "./Reveal";
@@ -225,6 +225,8 @@ const jobs: Record<string, Job>  = {
     tech: string[]
     github: string
     external?: string
+    /** A PDF write-up, surfaced as a labelled link rather than a bare icon. */
+    report?: { href: string; label: string }
     image?: StaticImageData
     span: string
   }[] = [
@@ -243,6 +245,7 @@ const jobs: Record<string, Job>  = {
         "A zero-shot indoor navigation agent that follows plain-language instructions with no finetuning, built for my undergraduate thesis. Combines panoramic scene summarization with a graph-based spatial memory, reaching a 47.13% success rate on Room-to-Room and outperforming prior training-based approaches.",
       tech: ["LLaVA-NeXT", "GPT-4o", "Matterport3D"],
       github: "https://github.com/ahmed-fz11/LLM-Nav",
+      report: { href: "/VLN_Report.pdf", label: "Read the thesis report" },
       image: vlnpic,
       span: "lg:col-span-2",
     },
@@ -549,6 +552,29 @@ const jobs: Record<string, Job>  = {
                 <p className="mt-3 max-w-prose text-sm leading-relaxed text-content-muted">
                   {project.description}
                 </p>
+
+                {/* Labelled, not a bare icon: a document glyph alone doesn't
+                    say "thesis report PDF", and icon-only links were exactly
+                    what the accessibility pass flagged. */}
+                {project.report && (
+                  <Link
+                    href={project.report.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group/report mt-4 inline-flex w-fit items-center gap-2 font-mono text-xs text-brand
+                               underline-offset-4 transition-colors duration-200 hover:underline"
+                  >
+                    <FileText className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    {project.report.label}
+                    <span className="text-content-muted">(PDF)</span>
+                    <span
+                      aria-hidden="true"
+                      className="transition-transform duration-200 ease-out-quart group-hover/report:translate-x-0.5"
+                    >
+                      ↗
+                    </span>
+                  </Link>
+                )}
 
                 {/* Full-strength token, not /80 — the opacity modifier put
                     this at 4.46:1, just under the 4.5:1 AA floor. */}
