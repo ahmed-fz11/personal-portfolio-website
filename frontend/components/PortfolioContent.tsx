@@ -12,6 +12,7 @@ import pfpic from "../media/pf_pic.png";
 import intellilearn_pic from "../media/intellilearn.png"; // example for IntelliLearn
 import replygeniepic from "../media/replygenie.png";
 import vlnpic from "../media/vln.png";
+import songrecpic from "../media/song_rec.png";
 import emailjs from "emailjs-com";
 
 export function PortfolioContent() {
@@ -256,19 +257,20 @@ const jobs: Record<string, Job>  = {
       span: "lg:col-span-3",
     },
     {
-      title: "AttendiGo",
-      description:
-        "A full-stack attendance platform for teachers — class creation, a reporting dashboard, and AI-generated insights. A self-hosted n8n workflow joins attendance and student records on a webhook trigger and calls an LLM to surface trends and flag at-risk students.",
-      tech: ["Flask", "React", "Supabase", "n8n"],
-      github: "https://github.com/ahmed-fz11/attendigo-chalkboard-charm",
-      span: "lg:col-span-3",
-    },
-    {
       title: "Song Recommendation Platform",
       description:
         "A serverless recommendation backend on AWS Lambda and API Gateway, provisioned end-to-end with Terraform — Cognito for auth, RDS Postgres for persistence, and a React frontend on S3 + CloudFront.",
       tech: ["AWS", "Terraform", "Python", "React"],
       github: "https://github.com/tahachm/moody-lyrics",
+      image: songrecpic,
+      span: "lg:col-span-3",
+    },
+    {
+      title: "AttendiGo",
+      description:
+        "A full-stack attendance platform for teachers — class creation, a reporting dashboard, and AI-generated insights. A self-hosted n8n workflow joins attendance and student records on a webhook trigger and calls an LLM to surface trends and flag at-risk students.",
+      tech: ["Flask", "React", "Supabase", "n8n"],
+      github: "https://github.com/ahmed-fz11/attendigo-chalkboard-charm",
       span: "lg:col-span-2",
     },
     {
