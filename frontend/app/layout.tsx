@@ -25,9 +25,53 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
+const SITE_URL = "https://personal-portfolio-website-pb2w.vercel.app";
+
+const DESCRIPTION =
+  "Full-Stack & Machine Learning Engineer. LUMS Computer Science graduate, " +
+  "most recently at Tajir (YC W20). I build with Python, TypeScript, React, " +
+  "FastAPI and LLMs — RAG systems, AI agents and production web apps.";
+
+/**
+ * The title was just a name and the description was "This is the official
+ * website of Ahmad Faraz" — no role, no stack, nothing searchable. There were
+ * also no Open Graph or Twitter tags at all, so every share of this link on
+ * LinkedIn or Slack rendered as a bare URL with no preview card.
+ */
 export const metadata: Metadata = {
-  title: "Ahmad Faraz",
-  description: "This is the official website of Ahmad Faraz",
+  metadataBase: new URL(SITE_URL),
+  title: "Ahmad Faraz — Full-Stack & ML Engineer",
+  description: DESCRIPTION,
+  keywords: [
+    "Ahmad Faraz",
+    "Full-Stack Engineer",
+    "Machine Learning Engineer",
+    "React",
+    "FastAPI",
+    "RAG",
+    "LLM",
+    "LUMS",
+  ],
+  authors: [{ name: "Ahmad Faraz", url: SITE_URL }],
+  creator: "Ahmad Faraz",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: "Ahmad Faraz",
+    title: "Ahmad Faraz — Full-Stack & ML Engineer",
+    description: DESCRIPTION,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ahmad Faraz — Full-Stack & ML Engineer",
+    description: DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
