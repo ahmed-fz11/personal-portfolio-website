@@ -246,26 +246,84 @@ const jobs: Record<string, Job>  = {
   ];
 
   return (
-    <main className="container mx-auto px-8 md:px-24 py-24">
-      {/* Hero Section */}
-      <section className="min-h-screen flex flex-col justify-center">
-        <p className="text-brand font-mono mb-5">Hi, my name is</p>
-        <h1 className="text-6xl md:text-7xl font-bold text-content mb-4">
+    <main className="container mx-auto px-8 md:px-24 pb-24">
+      {/*
+        Hero. Previously min-h-screen + justify-center on top of the main's
+        py-24, which pushed the headline 41% of the way down the first screen.
+        Now the section owns its spacing and the type starts near the top.
+        Entrance runs once on load, staggered via --enter-delay.
+      */}
+      <section className="flex min-h-[calc(100svh-4rem)] flex-col justify-center pt-28 pb-20">
+        <p
+          className="enter font-mono text-eyebrow uppercase text-brand mb-6"
+          style={{ "--enter-delay": "0ms" } as React.CSSProperties}
+        >
+          Hi, my name is
+        </p>
+
+        <h1
+          className="enter font-display text-display-1 font-bold text-content text-balance"
+          style={{ "--enter-delay": "70ms" } as React.CSSProperties}
+        >
           Ahmad Faraz.
         </h1>
-        <h2 className="text-5xl md:text-6xl font-bold text-content-muted mb-6">
+
+        {/*
+          Weight drops to 500 here. Previously both h1 and h2 were 700 at a
+          1.2:1 size step, so the two largest elements competed instead of
+          establishing rank.
+        */}
+        <h2
+          className="enter font-display text-display-2 font-medium text-content-muted mt-4 max-w-[22ch] text-balance"
+          style={{ "--enter-delay": "140ms" } as React.CSSProperties}
+        >
           I build things for the web and AI.
         </h2>
-        <p className="max-w-xl text-lg mb-12 text-content-muted">
+
+        <p
+          className="enter max-w-prose text-body-lg text-content-muted mt-8"
+          style={{ "--enter-delay": "210ms" } as React.CSSProperties}
+        >
           I&apos;m a Computer Science graduate from LUMS, specializing in Machine Learning and Full-Stack Development.
           Most recently, I worked as a Full-Stack Engineer at Tajir (YC W20), and I&apos;m currently open to new opportunities.
         </p>
-        <Link
-          href="#work"
-          className="border border-brand text-brand px-7 py-4 rounded w-fit hover:bg-brand/10 transition-all duration-300"
+
+        <div
+          className="enter mt-12 flex flex-wrap items-center gap-x-8 gap-y-4"
+          style={{ "--enter-delay": "280ms" } as React.CSSProperties}
         >
-          Check out my work!
-        </Link>
+          {/* Filled: the one primary action on the first screen. It was
+              previously an outline button, identical in weight to Résumé. */}
+          <Link
+            href="#work"
+            onClick={(e) => {
+              e.preventDefault()
+              document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })
+            }}
+            className="group inline-flex items-center gap-2 rounded bg-brand px-7 py-4 font-mono text-sm text-surface
+                       transition-[transform,box-shadow] duration-200 ease-out-quart
+                       hover:-translate-y-0.5 hover:shadow-lg hover:shadow-brand/20"
+          >
+            View my work
+            <span
+              aria-hidden="true"
+              className="transition-transform duration-200 ease-out-quart group-hover:translate-x-1"
+            >
+              →
+            </span>
+          </Link>
+
+          <Link
+            href="#contact"
+            onClick={(e) => {
+              e.preventDefault()
+              document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
+            }}
+            className="font-mono text-sm text-content-muted underline-offset-4 transition-colors duration-200 hover:text-brand hover:underline"
+          >
+            Get in touch
+          </Link>
+        </div>
       </section>
 
       {/* About Section */}
