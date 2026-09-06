@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { Github, ExternalLink, Folder } from "lucide-react";
-import Image from "next/image";
+import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
+import { Reveal } from "./Reveal";
+import { SectionHeading } from "./SectionHeading";
 import pfpic from "../media/pf_pic.png";
 import intellilearn_pic from "../media/intellilearn.png"; // example for IntelliLearn
 import replygeniepic from "../media/replygenie.png";
@@ -158,90 +160,96 @@ const jobs: Record<string, Job>  = {
   };
 
   // Featured projects array with unique images
-  const projects = [
+  /**
+   * One unified project list. Previously this was two arrays rendered as
+   * three full-width overlap cards plus a uniform 3-col grid; the overlap
+   * layout put an absolutely-positioned panel over a shorter image, so the
+   * panel spilled onto bare background below ~1280px. The bento grid removes
+   * the overlap entirely.
+   *
+   * `external` is only set where a live URL actually exists — five cards
+   * previously rendered an external-link icon pointing at "#", which looked
+   * clickable and did nothing.
+   */
+  const projects: {
+    title: string
+    description: string
+    tech: string[]
+    github: string
+    external?: string
+    image?: StaticImageData
+    span: string
+  }[] = [
     {
       title: "ReplyGenie",
       description:
         "An AI-powered Outlook add-in that reads the active email thread and drafts contextual replies with GPT-4o-mini — no more tab-switching to catch up on a conversation. Built as a multi-tenant SaaS with FastAPI and Supabase Auth, with per-tenant data isolation and full draft-history logging.",
       tech: ["React", "Office.js", "FastAPI", "Supabase", "OpenAI"],
-      links: {
-        github: "https://github.com/ahmed-fz11/outlook-ai-copilot",
-        external: "#",
-      },
+      github: "https://github.com/ahmed-fz11/outlook-ai-copilot",
       image: replygeniepic,
+      span: "lg:col-span-4",
     },
     {
       title: "Zero-Shot Vision and Language Navigation",
       description:
-        "A zero-shot indoor navigation agent that follows plain-language instructions with no finetuning or task-specific training, built for my undergraduate thesis. Combines panoramic scene summarization with a graph-based spatial memory to reason about where to go next, reaching a 47.13% success rate on the Room-to-Room benchmark and outperforming prior training-based approaches.",
+        "A zero-shot indoor navigation agent that follows plain-language instructions with no finetuning, built for my undergraduate thesis. Combines panoramic scene summarization with a graph-based spatial memory, reaching a 47.13% success rate on Room-to-Room and outperforming prior training-based approaches.",
       tech: ["LLaVA-NeXT", "GPT-4o", "Matterport3D"],
-      links: {
-        github: "https://github.com/ahmed-fz11/LLM-Nav",
-        external: "#",
-      },
+      github: "https://github.com/ahmed-fz11/LLM-Nav",
       image: vlnpic,
+      span: "lg:col-span-2",
     },
     {
       title: "IntelliLearn",
       description:
-        "An AI-powered ed-tech platform enabling course exploration, enrollment, community engagement, and personalized learning with a GPT-3.5 chatbot and text summarization. Features include a timed quiz system with concept feedback, React Redux for state management, and student/admin dashboards for performance tracking.",
+        "An AI-powered ed-tech platform for course exploration, enrollment and personalized learning, with a GPT-3.5 chatbot, text summarization, a timed quiz system with concept feedback, and student/admin dashboards.",
       tech: ["MERN", "GPT-3.5", "React Redux"],
-      links: {
-        github: "https://github.com/SE-Group-18/GPT-EdTech",
-        external: "https://intellilearn-gamma.vercel.app/",
-      },
+      github: "https://github.com/SE-Group-18/GPT-EdTech",
+      external: "https://intellilearn-gamma.vercel.app/",
       image: intellilearn_pic,
+      span: "lg:col-span-3",
     },
-  ];
-
-  // Other projects array with unique projects
-  const otherProjects = [
     {
       title: "AttendiGo",
-      description: "A full-stack attendance platform for teachers — class creation, a reporting dashboard, and AI-generated insights. A self-hosted n8n workflow joins attendance and student records on a webhook trigger and calls an LLM to surface trends and flag at-risk students automatically.",
+      description:
+        "A full-stack attendance platform for teachers — class creation, a reporting dashboard, and AI-generated insights. A self-hosted n8n workflow joins attendance and student records on a webhook trigger and calls an LLM to surface trends and flag at-risk students.",
       tech: ["Flask", "React", "Supabase", "n8n"],
-      links: {
-        github: "https://github.com/ahmed-fz11/attendigo-chalkboard-charm",
-        external: "#",
-      },
+      github: "https://github.com/ahmed-fz11/attendigo-chalkboard-charm",
+      span: "lg:col-span-3",
     },
     {
-      title: "Song Recommendation Application",
+      title: "Song Recommendation Platform",
       description:
-        "A scalable song recommendation app deployed on AWS using EC2, S3, RDS, and Lambda, ensuring low-latency responses and efficient backend processing. Integrated AWS Cognito for secure authentication and implemented Auto Scaling, ALB, and CloudFront to enhance availability and performance.",
-      tech: ["React.js", "Python", "Terraform", "AWS"],
-      links: {
-        github: "https://github.com/tahachm/moody-lyrics",
-        external: "#",
-      },
+        "A serverless recommendation backend on AWS Lambda and API Gateway, provisioned end-to-end with Terraform — Cognito for auth, RDS Postgres for persistence, and a React frontend on S3 + CloudFront.",
+      tech: ["AWS", "Terraform", "Python", "React"],
+      github: "https://github.com/tahachm/moody-lyrics",
+      span: "lg:col-span-2",
     },
     {
       title: "AI Chef Assistant",
       description:
-        "An AI-powered cooking assistant that generates personalized recipes with step-by-step cooking instructions and corresponding images using Llama and DALL·E 2, providing users with nutrition insights, prep time, and cooking tips. React.js frontend is deployed on Netlify and Python Flask backend is deployed on Hugging Face Spaces.",
-      tech: ["Flask", "React.js", "Llama 3", "DALL·E 2", "Hugging Face Spaces"],
-      links: {
-        github: "https://github.com/Zaimr49/AI-Chef-Assistant/tree/main",
-        external: "https://ai-chef-assistant.netlify.app/",
-      },
+        "A cooking assistant that generates personalized recipes with step-by-step instructions and matching images using Llama 3 and DALL·E 2, plus nutrition insights and prep time.",
+      tech: ["Flask", "React.js", "Llama 3", "DALL·E 2"],
+      github: "https://github.com/Zaimr49/AI-Chef-Assistant/tree/main",
+      external: "https://ai-chef-assistant.netlify.app/",
+      span: "lg:col-span-2",
     },
     {
-      title: "Content Moderation and Toxicity Classification",
-      description: "A content moderation system implementing Naive Bayes, RNN, and BERT, with BERT achieving an 88.29% recall. Class imbalance handling improved toxicity classification, with BERT identified as the most effective model. Future enhancements include ensembling and expanded datasets.",
-      tech: ["Python", "Hugging Face Transformers"],
-      links: {
-        github: "https://github.com/ahmed-fz11/Content-Moderation-and-Toxicity-Classification",
-        external: "#",
-      },
+      title: "Content Moderation & Toxicity Classification",
+      description:
+        "Naive Bayes, RNN and BERT compared on toxic-comment classification, with BERT reaching 88.29% recall after class-imbalance handling.",
+      tech: ["Python", "Hugging Face"],
+      github: "https://github.com/ahmed-fz11/Content-Moderation-and-Toxicity-Classification",
+      span: "lg:col-span-2",
     },
     {
       title: "US Crime Data Analysis and Prediction",
-      description: "Analyzed US crime data and demographic factors over four decades. Used causal inference to evaluate their impact on crime rates. Achieved accurate predictions with a two-layer neural network and SARIMAX modeling.",
-      tech: ["Python", "TensorFlow/Keras", "Scikit-Learn","Statsmodels","PMDARIMA"],
-      links: {
-        github: "https://github.com/ahmed-fz11/US-Crime-Analysis-and-Prediction",
-        external: "https://medium.com/@ahmedd.fz11/beyond-the-headlines-a-data-driven-analysis-of-crime-in-us-amidst-shifting-demographics-and-fdc42d4ebcfa",
-      },
+      description:
+        "Four decades of US crime and demographic data analysed with causal inference, then forecast with a two-layer neural network and SARIMAX modelling. Written up on Medium.",
+      tech: ["Python", "TensorFlow/Keras", "Scikit-Learn", "Statsmodels"],
+      github: "https://github.com/ahmed-fz11/US-Crime-Analysis-and-Prediction",
+      external:
+        "https://medium.com/@ahmedd.fz11/beyond-the-headlines-a-data-driven-analysis-of-crime-in-us-amidst-shifting-demographics-and-fdc42d4ebcfa",
+      span: "lg:col-span-6",
     },
   ];
 
@@ -414,99 +422,84 @@ const jobs: Record<string, Job>  = {
         </div>
       </section>
 
-      {/* Projects Section */}
-      <section id="work" className="py-24">
-        <div className="flex items-center gap-4 mb-12">
-          <h3 className="text-2xl font-semibold text-content">
-            <span className="text-brand font-mono">03.</span> Some Things I&apos;ve Built
-          </h3>
-          <div className="h-[1px] w-full bg-slate-200 dark:bg-slate-600"></div>
-        </div>
-        {/* Featured Projects */}
-        <div className="space-y-24 md:space-y-36">
+      {/* Projects — bento grid. Varied spans give the section rhythm and,
+          critically, remove the absolute-overlay layout whose panel used to
+          overflow its image below 1280px. */}
+      <section id="work" className="py-24 md:py-28">
+        <SectionHeading num="03." title="Some Things I've Built" />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-5">
           {projects.map((project, index) => (
-            <div key={index} className="relative group">
-              {/* Project Content */}
-              <div className="md:absolute md:top-0 md:left-0 md:w-1/2 z-10 bg-surface-raised/90 p-6 rounded-lg md:rounded-none mb-6 md:mb-0">
-                <p className="text-brand font-mono text-sm mb-2">Featured Project</p>
-                <h4 className="text-xl md:text-2xl font-semibold text-content mb-4">
+            <Reveal
+              key={project.title}
+              as="article"
+              delay={Math.min(index, 3) * 60}
+              className={`${project.span} group relative flex flex-col overflow-hidden rounded-lg
+                          border border-content/10 bg-surface-raised
+                          transition-[transform,border-color,box-shadow] duration-200 ease-out-quart
+                          hover:-translate-y-1 hover:border-brand/40 hover:shadow-xl hover:shadow-brand/5`}
+            >
+              {project.image && (
+                <div className="relative aspect-video overflow-hidden border-b border-content/10">
+                  <Image
+                    src={project.image}
+                    alt={`${project.title} preview`}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 66vw"
+                    className="object-cover transition-transform duration-300 ease-out-quart group-hover:scale-[1.03]"
+                  />
+                </div>
+              )}
+
+              <div className="flex flex-1 flex-col p-6">
+                <div className="mb-4 flex items-start justify-between gap-4">
+                  {!project.image && (
+                    <Folder className="h-8 w-8 shrink-0 text-brand" aria-hidden="true" />
+                  )}
+                  <div className="ml-auto flex gap-3">
+                    <Link
+                      href={project.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${project.title} source on GitHub`}
+                      className="text-content-muted transition-[color,transform] duration-200 ease-out-quart hover:text-brand hover:-translate-y-0.5"
+                    >
+                      <Github className="h-5 w-5" aria-hidden="true" />
+                    </Link>
+                    {/* Only rendered when a live URL exists. */}
+                    {project.external && (
+                      <Link
+                        href={project.external}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${project.title} live site`}
+                        className="text-content-muted transition-[color,transform] duration-200 ease-out-quart hover:text-brand hover:-translate-y-0.5"
+                      >
+                        <ExternalLink className="h-5 w-5" aria-hidden="true" />
+                      </Link>
+                    )}
+                  </div>
+                </div>
+
+                <h4 className="font-display text-subheading font-semibold text-content transition-colors duration-200 group-hover:text-brand">
                   {project.title}
                 </h4>
-                {/* Description Box */}
-                <div className="md:bg-surface-raised md:p-6 md:rounded-lg md:shadow-xl mb-4">
-                  <p className="text-sm md:text-base text-content-muted">{project.description}</p>
-                </div>
-                {/* Technologies */}
-                <ul className="flex flex-wrap gap-2 md:gap-4 font-mono text-xs md:text-sm my-4 text-content-muted">
-                  {project.tech.map((tech, techIndex) => (
-                    <li key={techIndex} className="hover:text-brand transition-colors">
-                      {tech}
-                    </li>
+
+                <p className="mt-3 max-w-prose text-sm leading-relaxed text-content-muted">
+                  {project.description}
+                </p>
+
+                <ul className="mt-auto flex flex-wrap gap-x-3 gap-y-1 pt-5 font-mono text-xs text-content-muted/80">
+                  {project.tech.map((tech) => (
+                    <li key={tech}>{tech}</li>
                   ))}
                 </ul>
-                {/* Links */}
-                <div className="flex gap-4">
-                  <Link
-                    href={project.links.github}
-                    className="text-content-muted hover:text-brand transition-colors transform hover:-translate-y-1 duration-200"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Github className="h-5 w-5" />
-                  </Link>
-                  <Link
-                    href={project.links.external}
-                    className="text-content-muted hover:text-brand transition-colors transform hover:-translate-y-1 duration-200"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <ExternalLink className="h-5 w-5" />
-                  </Link>
-                </div>
               </div>
-              {/* Project Image Container */}
-              <div className="relative w-full md:w-2/3 aspect-video md:ml-auto">
-                <Image
-                  src={project.image}
-                  alt={project.title}
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-lg transition-all duration-300 hover:brightness-75"
-                />
-                <div className="absolute inset-0 rounded-lg bg-transparent group-hover:bg-black/25 transition-all duration-300" />
-              </div>
-            </div>
-          ))}
-        </div>
-        {/* Other Projects Section */}
-        <h4 className="text-center text-content text-xl mt-24 mb-12">
-          Other Noteworthy Projects
-        </h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {otherProjects.map((proj, idx) => (
-            <div key={idx} className="bg-surface-raised rounded-lg p-6 hover:-translate-y-2 transition-all">
-              <div className="flex justify-between items-center mb-6">
-                <Folder className="text-brand h-8 w-8 md:h-10 md:w-10" />
-                <div className="flex gap-4">
-                  <Link href={proj.links.github} className="text-content dark:text-content-muted hover:text-brand">
-                    <Github className="h-5 w-5" />
-                  </Link>
-                  <Link href={proj.links.external} className="text-content dark:text-content-muted hover:text-brand">
-                    <ExternalLink className="h-5 w-5" />
-                  </Link>
-                </div>
-              </div>
-              <h5 className="text-content text-lg md:text-xl mb-2">{proj.title}</h5>
-              <p className="text-sm mb-4 text-content-muted">{proj.description}</p>
-              <ul className="flex flex-wrap gap-2 md:gap-4 font-mono text-xs md:text-sm text-content-muted">
-                {proj.tech.map((tech, tidx) => (
-                  <li key={tidx}>{tech}</li>
-                ))}
-              </ul>
-            </div>
+            </Reveal>
           ))}
         </div>
       </section>
+
 
       {/* Contact Section with Conditional Rendering */}
       <section id="contact" className="py-24 text-center max-w-xl mx-auto">
