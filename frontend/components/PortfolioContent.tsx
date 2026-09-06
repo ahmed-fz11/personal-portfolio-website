@@ -146,6 +146,8 @@ export function PortfolioContent() {
 interface Job {
   title: string;
   company: string;
+  /** Company site. Optional — Teach Smart intentionally has none. */
+  url?: string;
   date: string;
   location: string;
   responsibilities: string[];
@@ -155,6 +157,7 @@ const jobs: Record<string, Job>  = {
     Tajir: {
       title: "Full-Stack Engineer",
       company: "Tajir (YC W20)",
+      url: "https://www.tajir.app/sellers",
       date: "June 2025 - July 2026",
       location: "Lahore, Pakistan",
       responsibilities: [
@@ -177,6 +180,7 @@ const jobs: Record<string, Job>  = {
     "Motive Inc": {
       title: "Intern - AI Foundation Team",
       company: "Motive Inc. (Formerly Keep Truckin)",
+      url: "https://gomotive.com/",
       date: "June 2024 - September 2024",
       location: "Remote",
       responsibilities: [
@@ -187,6 +191,7 @@ const jobs: Record<string, Job>  = {
     Devsinc: {
       title: "Full-Stack Developer Intern",
       company: "Devsinc",
+      url: "https://www.devsinc.com/",
       date: "July 2023 - September 2023",
       location: "Lahore, Pakistan",
       responsibilities: [
@@ -197,6 +202,7 @@ const jobs: Record<string, Job>  = {
     LUMS: {
       title: "Teaching Assistant",
       company: "Lahore University of Management Sciences",
+      url: "https://www.lums.edu.pk/",
       date: "September 2021 - May 2025",
       location: "Lahore, Pakistan",
       responsibilities: [
@@ -464,9 +470,30 @@ const jobs: Record<string, Job>  = {
           </div>
 
           <div>
+            {/* The company name itself is the link where one exists — the
+                brand colour already marks it as distinct, so it needs no
+                extra chrome beyond an underline on hover and an external
+                indicator. Teach Smart has no URL and stays plain text. */}
             <h4 className="font-display text-subheading font-semibold text-content">
               {jobs[activeJob].title}{" "}
-              <span className="text-brand">@ {jobs[activeJob].company}</span>
+              {jobs[activeJob].url ? (
+                <Link
+                  href={jobs[activeJob].url as string}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group/co text-brand underline-offset-4 transition-colors duration-200 hover:underline"
+                >
+                  @ {jobs[activeJob].company}
+                  <span
+                    aria-hidden="true"
+                    className="ml-1 inline-block text-[0.7em] align-middle transition-transform duration-200 ease-out-quart group-hover/co:-translate-y-0.5 group-hover/co:translate-x-0.5"
+                  >
+                    ↗
+                  </span>
+                </Link>
+              ) : (
+                <span className="text-brand">@ {jobs[activeJob].company}</span>
+              )}
             </h4>
             <p className="mt-2 font-mono text-sm text-content-muted">
               {jobs[activeJob].date} · {jobs[activeJob].location}
