@@ -548,7 +548,9 @@ const jobs: Record<string, Job>  = {
                   {project.description}
                 </p>
 
-                <ul className="mt-auto flex flex-wrap gap-x-3 gap-y-1 pt-5 font-mono text-xs text-content-muted/80">
+                {/* Full-strength token, not /80 — the opacity modifier put
+                    this at 4.46:1, just under the 4.5:1 AA floor. */}
+                <ul className="mt-auto flex flex-wrap gap-x-3 gap-y-1 pt-5 font-mono text-xs text-content-muted">
                   {project.tech.map((tech) => (
                     <li key={tech}>{tech}</li>
                   ))}

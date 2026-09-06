@@ -56,7 +56,9 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <p className="mt-12 font-mono text-xs text-content-muted/70">
+        {/* Full-strength token, not /70 — the opacity modifier put this at
+            4.01:1, under the 4.5:1 AA floor. */}
+        <p className="mt-12 font-mono text-xs text-content-muted">
           Designed &amp; built by Ahmad Faraz
         </p>
       </div>
