@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Space_Grotesk } from "next/font/google";
+import { Providers } from "@/components/Providers";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -45,8 +46,8 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable}`}
       suppressHydrationWarning
     >
-      <body className="antialiased font-sans">
-        {children}
+      <body className="antialiased font-sans bg-surface text-content-muted">
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

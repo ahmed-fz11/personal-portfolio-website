@@ -1,7 +1,6 @@
 import { Navbar } from "@/components/Navbar"
 import { PortfolioContent } from "@/components/PortfolioContent"
 import { SiteFooter } from "@/components/SiteFooter"
-import { ThemeProvider } from "next-themes"
 import Link from "next/link"
 import { Github, Linkedin, Mail } from "lucide-react"
 import { SOCIALS, EMAIL } from "@/lib/site"
@@ -10,7 +9,6 @@ const SOCIAL_ICONS = { github: Github, linkedin: Linkedin, mail: Mail } as const
 
 export default function Portfolio() {
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <div className="bg-surface min-h-screen text-content dark:text-content-muted relative">
         <Navbar />
 
@@ -55,6 +53,5 @@ export default function Portfolio() {
         <PortfolioContent />
         <SiteFooter />
       </div>
-    </ThemeProvider>
   )
 }
