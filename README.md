@@ -2,7 +2,7 @@
 
 My personal portfolio site — About, Experience, Projects, and a way to get in touch.
 
-**🔗 Live: [personal-portfolio-website-pb2w.vercel.app](https://personal-portfolio-website-pb2w.vercel.app/)**
+**🔗 Live: [ahmadfarazdev.vercel.app](https://ahmadfarazdev.vercel.app/)**
 
 ![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)

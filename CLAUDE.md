@@ -24,6 +24,17 @@ There is no test framework configured. `npm run build` is the de-facto verificat
 
 Next.js 14 App Router, TypeScript, Tailwind, deployed on Vercel (project `personal-portfolio-website-pb2w`). Pushing to `main` triggers a production deploy.
 
+**The project serves two domains, and the project name is not the canonical
+URL.** `ahmadfarazdev.vercel.app` is canonical — it is what `SITE_URL` points
+at in `layout.tsx`, `robots.ts` and `sitemap.ts`, and what the OG card prints.
+`personal-portfolio-website-pb2w.vercel.app` is the original auto-generated
+domain, kept alive so links already shared (CV, LinkedIn) don't break; both
+are aliased to Production. `ahmadfaraz.vercel.app` was unavailable — it belongs
+to an unrelated Vercel user. If you ever change the canonical domain, all four
+`SITE_URL`/OG references must move together or the canonical tag, sitemap and
+share cards will point somewhere the site no longer claims. Vercel's Domains
+page is reached from the project's **left sidebar**, not the Settings sub-nav.
+
 It is a **single-page site**: exactly one route (`/`), statically prerendered. The "pages" in the nav are anchor sections (`#about`, `#experience`, `#work`, `#contact`) that the Navbar smooth-scrolls to via `scrollIntoView`.
 
 Key files:

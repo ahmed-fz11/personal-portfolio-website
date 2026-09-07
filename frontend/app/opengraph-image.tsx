@@ -68,7 +68,7 @@ export default function OpengraphImage() {
             fontFamily: "monospace",
           }}
         >
-          personal-portfolio-website-pb2w.vercel.app
+          ahmadfarazdev.vercel.app
         </div>
       </div>
     ),

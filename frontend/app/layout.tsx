@@ -25,7 +25,7 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
-const SITE_URL = "https://personal-portfolio-website-pb2w.vercel.app";
+const SITE_URL = "https://ahmadfarazdev.vercel.app";
 
 const DESCRIPTION =
   "Full-Stack & Machine Learning Engineer. LUMS Computer Science graduate, " +
