@@ -38,9 +38,91 @@ Supporting components: `Navbar.tsx` (desktop nav + scroll-spy + full-screen mobi
 
 Hardcoded content: work history, projects and skills in `PortfolioContent.tsx`; nav/social/résumé/email in `lib/site.ts`.
 
+## Updating the site
+
+There is no CMS — every piece of content is hardcoded in two files. This is the
+map for routine updates (new job, new project, refreshed résumé).
+
+| To change… | Edit |
+|---|---|
+| Hero name/tagline/intro, About copy | `components/PortfolioContent.tsx` |
+| Work history | `jobs` in `PortfolioContent.tsx` |
+| Projects | `projects` in `PortfolioContent.tsx` |
+| Skills | `skillCategories` in `PortfolioContent.tsx` |
+| Nav items, social links, email, résumé path | `lib/site.ts` |
+| Page title, description, OG/Twitter cards | `app/layout.tsx` |
+| 404 copy | `app/not-found.tsx` |
+| Colours, motion tokens | `app/globals.css` + `tailwind.config.ts` |
+
+### Adding or editing a job
+
+`jobs` is a `Record<string, Job>`. **The object key is the tab label**, and the
+key order is the tab order. Keys containing spaces must be quoted — the current
+five are `Tajir`, `"Teach Smart"`, `"Motive Inc"`, `Devsinc`, `LUMS`. `url` is
+optional (Teach Smart deliberately has none; the company name renders unlinked).
+
+**`activeJob` is initialised to the literal `"Tajir"`.** Rename or remove that
+key without updating `useState("Tajir")` and the Experience section renders an
+empty panel on first paint — the tabs appear, but no content until you click one.
+
+### Adding a project
+
+The bento grid is **6 columns at `lg`**, and each card's `span` is an
+`lg:col-span-N` string. **Spans must sum to 6 per row** or the grid goes ragged.
+The current eight cards lay out as:
+
+```
+ReplyGenie 4 + VLN 2                    = 6
+IntelliLearn 3 + Song Rec 3             = 6
+AttendiGo 2 + AI Chef 2 + Content Mod 2 = 6
+US Crime 6                              = 6
+```
+
+Below `lg` the spans stop applying and cards stack (`grid-cols-1`, then
+`sm:grid-cols-2`), so you only need to think about the six-column arithmetic.
+
+Optional per-project fields: `image` (a `media/` import), `github`, `external`
+(live demo) and `report` (`{ href, label }`, used for the VLN thesis PDF).
+
+**Any GitHub link must point at a public repo.** Two cards once linked private
+ones, which 404 for every visitor while looking fine to the logged-in owner.
+
+### Swapping the résumé
+
+Drop the PDF in `frontend/public/` and update `RESUME_PATH` in `lib/site.ts`.
+That one constant feeds the header button, the mobile menu and the footer.
+
+### Changing the email address
+
+`EMAIL` in `lib/site.ts` covers the footer, the contact section and the vertical
+rail — but the `mailto:` in `SOCIALS` is a *separate* literal in the same file,
+and the EmailJS template's destination lives in the EmailJS dashboard, not the
+repo. All three have to move together.
+
+### Shipping
+
+Push to `main`; Vercel deploys automatically and the new build is live in about
+70 seconds. Vercel's "Root Directory" is set to `frontend`.
+
+Before pushing:
+
+1. `npm run build` from `frontend/` — this is the only gate; it type-checks and
+   lints. There is no test suite.
+2. Load the page in both themes and confirm the console is clean.
+3. If you touched colours, re-run a contrast audit that composites alpha, and
+   confirm any finding against a screenshot (see Verifying changes).
+4. If you added or changed a link, check it resolves while logged out.
+
 ## Gotchas
 
-**There is no `public/` directory.** Images live in `frontend/media/` and are pulled in as ES module imports for `next/image` static import (`import pfpic from "../media/pf_pic.png"`). To add an image, drop it in `media/` and import it — do not reference it by a URL path.
+**Images and static files live in two different places, and mixing them up
+fails silently.** Images go in `frontend/media/` and are pulled in as ES module
+imports for `next/image` static import (`import pfpic from "../media/pf_pic.png"`)
+— drop the file in `media/`, import it, never reference it by URL path.
+`frontend/public/` exists but holds only files served *by URL*: the résumé
+(`Ahmad_Faraz_Resume_Jul_2026.pdf`) and `VLN_Report.pdf`. Put an image in
+`public/` and `next/image`'s static-import benefits (dimensions, blur, hashing)
+are lost; put a PDF in `media/` and nothing can link to it.
 
 **EmailJS credentials (service ID, template ID, public key) are inline literals** in `PortfolioContent.tsx`'s `handleSubmit`, by choice, not oversight — the public key is publishable by design and moving the others to env vars would need matching Vercel config for no real benefit yet.
 
