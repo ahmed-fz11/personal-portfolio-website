@@ -10,6 +10,18 @@ const SOCIAL_ICONS = { github: Github, linkedin: Linkedin, mail: Mail } as const
 export default function Portfolio() {
   return (
       <div className="bg-surface min-h-screen text-content dark:text-content-muted relative">
+        {/* First in tab order: 44 controls are tabbable on this page and six of
+            them sit in the header, so without this a keyboard user re-traverses
+            the whole nav on every visit (WCAG 2.4.1). Off-screen until focused. */}
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-6 focus:top-6 focus:z-[60]
+                     focus:rounded focus:bg-brand focus:px-5 focus:py-3
+                     focus:font-mono focus:text-sm focus:text-surface"
+        >
+          Skip to content
+        </a>
+
         <Navbar />
 
         {/* Fixed social rail — decorative on desktop; the same links are

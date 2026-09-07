@@ -375,7 +375,7 @@ const jobs: Record<string, Job>  = {
   ];
 
   return (
-    <main className="container mx-auto px-8 md:px-24 pb-24">
+    <main id="main" className="container mx-auto px-8 md:px-24 pb-24">
       {/*
         Hero. Previously min-h-screen + justify-center on top of the main's
         py-24, which pushed the headline 41% of the way down the first screen.

@@ -1,5 +1,15 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { EMAIL } from "@/lib/site"
+
+/**
+ * Without this the 404 inherits the home page's title, so a dead link sits in
+ * the tab strip, history and bookmarks claiming to be the portfolio itself.
+ */
+export const metadata: Metadata = {
+  title: "Page not found — Ahmad Faraz",
+  robots: { index: false, follow: true },
+}
 
 export default function NotFound() {
   return (

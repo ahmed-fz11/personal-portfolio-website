@@ -48,6 +48,30 @@ Hardcoded content: work history, projects and skills in `PortfolioContent.tsx`; 
 
 **Font CSS variables must live on `<html>`, not `<body>`.** Tailwind's preflight sets `font-family` on `<html>`, and an undefined `var()` invalidates the *whole* declaration rather than falling through to the next entry in the stack — so with the variables on `<body>` the page silently rendered in Times. `layout.tsx` puts all three font variables on `<html>`; `tailwind.config.ts` maps them to `font-sans` / `font-mono` / `font-display`. Before this was wired up, both Geist faces shipped as payload and neither actually rendered.
 
+**Security headers live in `next.config.mjs`'s `headers()`, and the CSP is
+hand-tuned.** `script-src` keeps `'unsafe-inline'` on purpose: the App Router
+streams its RSC payload through inline `self.__next_f.push(...)` tags and
+next-themes injects an inline pre-paint script, so a nonce would require adding
+middleware this site otherwise has no use for. `connect-src` allows exactly one
+external origin, `https://api.emailjs.com` — **if you add any third-party call,
+it will be silently blocked until you widen this.** Fonts are self-hosted by
+next/font at build time, so `font-src 'self'` is sufficient; don't add a Google
+Fonts origin. After touching the CSP, reload and confirm zero violations in the
+console — a broken policy fails quietly, not loudly.
+
+**Contact-form length caps are defined twice, and both must move together.**
+`FormField`'s `maxLength` prop only constrains typing and pasting; anything
+driving the input programmatically walks straight past it. `MAX_LEN` in
+`PortfolioContent.tsx` re-checks the same ceilings in `validateField` before
+send. Change one without the other and the guard silently stops matching.
+
+**The scroll-spy reading line (`line = 104` in `Navbar.tsx`) is deliberately
+below the sections' `scroll-margin-top: 6rem` (96px).** A nav click lands the
+target at exactly 96 — the coordinate the line used to sit on — and at that tie
+the *outgoing* section still owned the line by a sub-pixel margin, so clicking
+"Contact" left "Work" highlighted. If you change `scroll-margin-top`, move the
+line with it and keep the clearance.
+
 **`lib/utils.ts` exports `cn()` but nothing imports it**, and no `components/ui/` directory exists — the shadcn setup is scaffolding that was never used.
 
 **Don't run `npm run build` while `npm run dev` is running against the same `.next` directory.** The production build overwrites the manifest the dev server has in memory, and the dev server starts 404ing every static chunk (JS, CSS) with a stale-reference mismatch until it's killed and restarted with a fresh `.next`. If dev suddenly serves an unstyled page, this is almost certainly why.
@@ -107,12 +131,28 @@ visual and motion makeover. **All 17 code findings are fixed**, including:
   tags, an unstyled 404, a form with zero `<label>`s and browser-default
   inputs — all addressed.
 
-**One finding is NOT code and remains open: the contact form is broken in
-production.** EmailJS returns `412 Gmail_API: Invalid grant` — the Gmail
-account behind the service needs reconnecting in the EmailJS dashboard. The
-form's error handling is correct and surfaces a fallback address, and a
-visible `mailto:` now sits beside the form, but no message will actually
-send until that OAuth grant is renewed.
+The EmailJS `412 Gmail_API: Invalid grant` that once broke the form in
+production is **resolved** — the Gmail account was reconnected in the EmailJS
+dashboard and sends were verified returning 200. When testing the form, note
+that `emailjs-com` sends over **XMLHttpRequest, not fetch**: stubbing
+`window.fetch` intercepts nothing and you will mail the owner's real inbox.
+
+A later security and robustness pass added: the five HTTP security headers
+(none were being sent), a `next` bump to 14.2.35 clearing the critical
+advisory, per-field length caps (a 200k-character message previously
+submitted fine), a skip link (WCAG 2.4.1), and a distinct `<title>` for the
+404 so dead links stop impersonating the home page in history.
+
+**Open, and not code:** two project cards link to GitHub repos that are
+private (`outlook-ai-copilot` for ReplyGenie, `attendigo-chalkboard-charm` for
+AttendiGo), so every visitor gets a 404 while the owner — being logged in —
+sees them fine. They must be made public, or the links removed.
+
+The 6 remaining npm advisories are all build-time-only and need a Next 16
+major to clear. Each was checked against this codebase: every one targets a
+feature the site does not use (Server Actions, middleware, rewrites, i18n,
+CSP nonces, remote images). Re-verify that before assuming an upgrade is
+urgent.
 
 Known cosmetic item, deliberately deferred: the fixed header is ~95% opaque,
 so content scrolling beneath it is faintly visible. Investigated previously
@@ -130,6 +170,30 @@ Note that injected JavaScript in an automation context may not receive
 `scroll` events — `window.scrollTo` moves the page but handlers never fire.
 Verify scroll-dependent behaviour (scroll-spy, reveals) with real input
 events, or you will "discover" bugs that don't exist.
+
+More automation-harness artifacts that look like site bugs but aren't — check
+these before filing anything:
+
+- **A blank screenshot mid-scroll is usually a reveal caught in flight.**
+  `.reveal` fades over 560ms; screenshot immediately after a jump and you get
+  an empty viewport. Wait, re-shoot, and check `.is-visible` counts before
+  concluding content is missing.
+- **`element.focus()` sets `document.activeElement` but does *not* match
+  `:focus` when the browser window itself is unfocused** — so `focus:` styles
+  (the skip link) and `:focus-visible` rings both appear not to work. Verify
+  the rule exists in the CSSOM instead of trusting the render.
+- **Synthetic clicks often focus a control without activating it.** Nine
+  clicks on the theme toggle left `localStorage` untouched. Drive the handler
+  with `el.click()` to test app logic.
+- **`resize_window` reports success without changing `innerWidth`**, in fresh
+  tabs too. Mobile/tablet layout could not be visually verified this way;
+  fall back to auditing the breakpoint classes.
+- **`next/image` below the fold reports `naturalWidth === 0`** — that is lazy
+  loading, not a broken image. Confirm against `responseStatus >= 400` counts.
+
+Both themes are verified WCAG AA with an alpha-compositing audit: 167 elements
+light / 169 dark, **0 failures**, including the message counter in its
+at-limit red state.
 
 ## Working style
 - Propose a plan before editing code; wait for approval.
