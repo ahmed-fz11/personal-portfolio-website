@@ -27,7 +27,13 @@ function useActiveSection() {
 
     const compute = () => {
       raf = 0
-      const line = 96 // just below the ~70px fixed header
+      // Deliberately below the sections' `scroll-margin-top: 6rem` (96px).
+      // A nav click lands the target at exactly 96 — the same coordinate the
+      // line used to sit on — and there the outgoing section still owns the
+      // line by a sub-pixel margin (its bottom rounds to 96.4 > 96), so
+      // clicking "Contact" left "Work" lit. The clearance makes the section
+      // you jumped to unambiguously own the line.
+      const line = 104
       let current = ""
 
       for (const id of ids) {

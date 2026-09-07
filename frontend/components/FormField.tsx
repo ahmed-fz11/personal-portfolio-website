@@ -21,6 +21,7 @@ export function FormField({
   placeholder,
   optional = false,
   textarea = false,
+  maxLength,
 }: {
   name: string
   label: string
@@ -33,10 +34,17 @@ export function FormField({
   placeholder?: string
   optional?: boolean
   textarea?: boolean
+  maxLength?: number
 }) {
   const id = `field-${name}`
   const errorId = `${id}-error`
   const invalid = Boolean(error)
+
+  // The counter stays hidden until you're near the cap — a number that ticks
+  // from the first keystroke reads as a quota, which isn't the tone we want on
+  // a "get in touch" form. It only earns its place once it's actionable.
+  const showCount = Boolean(maxLength) && value.length >= (maxLength as number) * 0.75
+  const atLimit = Boolean(maxLength) && value.length >= (maxLength as number)
 
   // Labels are deliberately quieter than the values they describe.
   const controlClasses = `w-full rounded border bg-surface px-3.5 py-3 text-body text-content
@@ -67,6 +75,7 @@ export function FormField({
           onChange={onChange}
           onBlur={onBlur}
           placeholder={placeholder}
+          maxLength={maxLength}
           aria-invalid={invalid || undefined}
           aria-describedby={invalid ? errorId : undefined}
           className={`${controlClasses} resize-y`}
@@ -81,16 +90,35 @@ export function FormField({
           onBlur={onBlur}
           autoComplete={autoComplete}
           placeholder={placeholder}
+          maxLength={maxLength}
           aria-invalid={invalid || undefined}
           aria-describedby={invalid ? errorId : undefined}
           className={controlClasses}
         />
       )}
 
-      {invalid && (
-        <p id={errorId} role="alert" className="mt-1.5 text-xs text-red-500 dark:text-red-400">
-          {error}
-        </p>
+      {/* Error and counter share one row so neither can shift the layout when
+          it appears. min-h keeps the row's height reserved either way. */}
+      {(invalid || showCount) && (
+        <div className="mt-1.5 flex min-h-4 items-start justify-between gap-3">
+          {invalid ? (
+            <p id={errorId} role="alert" className="text-xs text-red-500 dark:text-red-400">
+              {error}
+            </p>
+          ) : (
+            <span />
+          )}
+          {showCount && (
+            <span
+              aria-hidden="true"
+              className={`shrink-0 font-mono text-xs tabular-nums transition-colors duration-200 ${
+                atLimit ? "text-red-500 dark:text-red-400" : "text-content-muted"
+              }`}
+            >
+              {value.length}/{maxLength}
+            </span>
+          )}
+        </div>
       )}
     </div>
   )

@@ -54,8 +54,26 @@ export function PortfolioContent() {
   const [formLoadedAt] = useState(() => Date.now());
   const [cooldownMsg, setCooldownMsg] = useState("");
 
+  /*
+   * Mirrors the maxLength on each control. The attribute only constrains
+   * typing and pasting — anything driving the input programmatically walks
+   * straight past it, so the same ceiling is enforced here before send.
+   */
+  const MAX_LEN: Record<string, number> = {
+    name: 80,
+    email: 254,
+    contact: 32,
+    city: 64,
+    country: 64,
+    message: 2000,
+  };
+
   const validateField = (name: string, value: string): string => {
     const v = value.trim();
+    const cap = MAX_LEN[name];
+    if (cap && v.length > cap) {
+      return `Please keep this under ${cap} characters.`;
+    }
     if (name === "contact") return ""; // the only optional field
     if (!v) return "This field is required.";
     if (name === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
@@ -129,9 +147,14 @@ export function PortfolioContent() {
     setIsSending(true);
     setSendError(false);
     try {
+      // These three EmailJS identifiers are publishable by design — the SDK
+      // runs in the browser, so they ship in the bundle no matter where they
+      // live. Abuse is fenced off at the edges instead: the honeypot,
+      // MIN_FILL_MS and COOLDOWN_MS guards above, plus EmailJS's own
+      // allowed-origins and monthly quota settings.
       await emailjs.send(
-        "service_sdx5kvj",        // Replace with your EmailJS service ID
-        "template_3l4r2ik",        // Replace with your EmailJS template ID
+        "service_sdx5kvj",
+        "template_3l4r2ik",
         {
           name: formData.name,
           email: formData.email,
@@ -140,7 +163,7 @@ export function PortfolioContent() {
           country: formData.country,
           message: formData.message,
         },
-        "LdTK5qTkQpDzv_vKl"        // Replace with your EmailJS public key
+        "LdTK5qTkQpDzv_vKl"
       );
       // After a successful submission, set submitted to true so the form is replaced
       localStorage.setItem("lastContactSend", String(Date.now()));
@@ -724,35 +747,35 @@ const jobs: Record<string, Job>  = {
 
                 <div className="grid gap-5 sm:grid-cols-2">
                   <FormField
-                    name="name" label="Name" autoComplete="name"
+                    name="name" maxLength={80} label="Name" autoComplete="name"
                     value={formData.name} error={errors.name}
                     onChange={handleChange} onBlur={handleBlur}
                   />
                   <FormField
-                    name="email" label="Email" type="email" autoComplete="email"
+                    name="email" maxLength={254} label="Email" type="email" autoComplete="email"
                     value={formData.email} error={errors.email}
                     onChange={handleChange} onBlur={handleBlur}
                   />
                   <FormField
-                    name="contact" label="Phone" type="tel" autoComplete="tel" optional
+                    name="contact" maxLength={32} label="Phone" type="tel" autoComplete="tel" optional
                     value={formData.contact} error={errors.contact}
                     onChange={handleChange} onBlur={handleBlur}
                   />
                   <FormField
-                    name="city" label="City" autoComplete="address-level2"
+                    name="city" maxLength={64} label="City" autoComplete="address-level2"
                     value={formData.city} error={errors.city}
                     onChange={handleChange} onBlur={handleBlur}
                   />
                   <div className="sm:col-span-2">
                     <FormField
-                      name="country" label="Country" autoComplete="country-name"
+                      name="country" maxLength={64} label="Country" autoComplete="country-name"
                       value={formData.country} error={errors.country}
                       onChange={handleChange} onBlur={handleBlur}
                     />
                   </div>
                   <div className="sm:col-span-2">
                     <FormField
-                      name="message" label="Message" textarea
+                      name="message" maxLength={2000} label="Message" textarea
                       placeholder="What would you like to talk about?"
                       value={formData.message} error={errors.message}
                       onChange={handleChange} onBlur={handleBlur}
