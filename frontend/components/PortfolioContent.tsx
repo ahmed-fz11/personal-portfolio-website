@@ -41,6 +41,19 @@ export function PortfolioContent() {
    */
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  /*
+   * Spam friction. Deliberately modest, because the EmailJS browser SDK puts
+   * the service/template/public keys in the bundle — anything enforced here
+   * can be bypassed by posting straight to their API with a spoofed Origin.
+   * This stops drive-by bots that scrape and submit forms; the durable
+   * controls (origin allowlist, reCAPTCHA) live in the EmailJS dashboard.
+   */
+  const MIN_FILL_MS = 3000; // a human cannot complete six fields faster
+  const COOLDOWN_MS = 60_000; // one message per minute per browser
+  const [honeypot, setHoneypot] = useState(""); // must stay empty
+  const [formLoadedAt] = useState(() => Date.now());
+  const [cooldownMsg, setCooldownMsg] = useState("");
+
   const validateField = (name: string, value: string): string => {
     const v = value.trim();
     if (name === "contact") return ""; // the only optional field
@@ -72,6 +85,32 @@ export function PortfolioContent() {
   // Handle form submission using EmailJS
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setCooldownMsg("");
+
+    // 1. Honeypot: hidden from people, irresistible to naive bots. Fail
+    //    silently — showing the success state denies the bot any signal that
+    //    it was caught, while a real user can never trigger this.
+    if (honeypot) {
+      setSubmitted(true);
+      return;
+    }
+
+    // 2. Submitted implausibly fast — scripted fill rather than typing.
+    if (Date.now() - formLoadedAt < MIN_FILL_MS) {
+      setCooldownMsg("That was a little too quick — please try again.");
+      return;
+    }
+
+    // 3. Per-browser cooldown, so one person can't hammer send.
+    const last = Number(localStorage.getItem("lastContactSend") || 0);
+    const since = Date.now() - last;
+    if (last && since < COOLDOWN_MS) {
+      const wait = Math.ceil((COOLDOWN_MS - since) / 1000);
+      setCooldownMsg(
+        `You've just sent a message. Please wait ${wait}s before sending another.`
+      );
+      return;
+    }
 
     // Validate everything up front so all problems surface at once, and put
     // focus on the first offending field.
@@ -104,6 +143,7 @@ export function PortfolioContent() {
         "LdTK5qTkQpDzv_vKl"        // Replace with your EmailJS public key
       );
       // After a successful submission, set submitted to true so the form is replaced
+      localStorage.setItem("lastContactSend", String(Date.now()));
       setSubmitted(true);
     } catch (error) {
       console.error("Error sending message:", error);
@@ -656,8 +696,32 @@ const jobs: Record<string, Job>  = {
               <form
                 onSubmit={handleSubmit}
                 noValidate
-                className="rounded-lg border border-content/10 bg-surface-raised p-6 md:p-8"
+                className="relative rounded-lg border border-content/10 bg-surface-raised p-6 md:p-8"
               >
+                {/*
+                  Honeypot. Hidden from sighted users and from screen readers
+                  (aria-hidden + tabIndex -1), so no real person can fill it,
+                  but a bot parsing the DOM will. Positioned off-screen rather
+                  than display:none — some bots skip undisplayed inputs.
+                */}
+                <div
+                  aria-hidden="true"
+                  className="absolute left-[-9999px] h-px w-px overflow-hidden"
+                >
+                  <label htmlFor="company-website">
+                    Company website (leave this empty)
+                  </label>
+                  <input
+                    id="company-website"
+                    name="company-website"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                  />
+                </div>
+
                 <div className="grid gap-5 sm:grid-cols-2">
                   <FormField
                     name="name" label="Name" autoComplete="name"
@@ -706,6 +770,12 @@ const jobs: Record<string, Job>  = {
                 >
                   {isSending ? "Sending…" : "Send message"}
                 </button>
+
+                {cooldownMsg && (
+                  <p role="alert" className="mt-4 text-sm text-content-muted">
+                    {cooldownMsg}
+                  </p>
+                )}
 
                 {sendError && (
                   <p role="alert" className="mt-4 text-sm text-red-500 dark:text-red-400">
