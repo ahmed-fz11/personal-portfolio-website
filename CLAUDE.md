@@ -190,6 +190,19 @@ these before filing anything:
   fall back to auditing the breakpoint classes.
 - **`next/image` below the fold reports `naturalWidth === 0`** — that is lazy
   loading, not a broken image. Confirm against `responseStatus >= 400` counts.
+- **After a programmatic theme toggle, `getComputedStyle` can return the
+  *previous* theme's colors indefinitely** — waiting does not fix it. A
+  contrast audit run this way reported 27 light-mode failures, including the
+  Resume link at 1.25:1 (`#64ffda` on white), on a build whose CSS was
+  provably correct: `--brand` resolved to the light value at the very element
+  whose `color` came back as the dark hex, with no `.dark` ancestor. A
+  screenshot and a pixel zoom showed the button rendering correctly in
+  `#0f766e` the whole time. **Confirm any colour finding against pixels
+  before believing it**, and prefer auditing a theme the page loaded in over
+  one it was toggled into.
+- **`document.styleSheets` reads can silently yield nothing** — a CSSOM walk
+  returned `totalRules: 0` on a page whose rules had been readable minutes
+  earlier. Check the rule count is non-zero before trusting "rule not found".
 
 Both themes are verified WCAG AA with an alpha-compositing audit: 167 elements
 light / 169 dark, **0 failures**, including the message counter in its
